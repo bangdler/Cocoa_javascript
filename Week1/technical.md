@@ -2,7 +2,7 @@
 
 ## Day 1 (2021-11-01)
 
-Mission 4. Debugging 방법
+#### Mission 4. Debugging 방법
  1. breakpoints란
     * 코드를 검증하고 테스트하는 과정에서 미리 중단점을 설정하여 디버깅함.
     * IDE Tool 에서는 debugging mode를 통해 중단점 설정이 가능함.

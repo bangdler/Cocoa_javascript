@@ -4,9 +4,6 @@ var logging = [];
 var results = [];
 
 function getArea(figure, ...params) {
-    // a = a || 1;
-    // b = b || 1;
-    // c = c || 1;
     logging.push(figure)
     if (figure == 'circle') {
         var getCircle = function(a) {
@@ -28,7 +25,7 @@ function getArea(figure, ...params) {
         var height = params[0];
         var upper_width = params[1];
         var lower_width = params[2];
-        var area = height * (upper_width + lower_width);
+        var area = height * (upper_width + lower_width) / 2;
     }
     results.push(area);
     console.log(area)
