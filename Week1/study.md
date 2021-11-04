@@ -102,3 +102,70 @@ logging_results, logging_figure = getArea('trapezoid', logging_results, logging_
 logging_results, logging_figure = getArea('circle', logging_results, logging_figure, 5, 7)
 
 ```
+
+## Day 3 (2011-11-03)
+
+### 문법 공부
+1. Object vs Array
+
+    Object :  순서가 없는 정보를 정리하기에 좋다. 이름으로 식별자를 줄 수 있다. {} 사용하여 표현
+    
+    Array : 정보를 순서에 따라 정돈, 고유한 식별자(숫자)가 있다. [] 사용하여 표현
+    ```javascript
+    //object
+    let roles = {
+        'red' : 'apple',
+        'yellow' : 'banana'
+    }
+    console.log(roles.red)
+    
+    //object for in 함수
+    //변수는 key 값을 보여주고, value는 별도로 object[]를 통해 나타냄. 
+    for(let name in roles){
+        console.log('object =>', name, 'value =>', roles[name]);
+    }
+    ```
+    
+2. this, new
+
+    this는 조금 찾아봤지만 바인딩, 명시, apply, call 등 개념이 어렵고 헷갈린다.
+    
+    - 참고 사이트
+        
+        [this 의미, 명시 관련 블로그](https://191125.tistory.com/59)
+        
+        [new - MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/new)
+        
+3. 모던자바스크립트 10장 객체 리터럴, 13장 스코프 반절 읽음.
+
+### Mission
+
+1. 추가 문제 - 사용자 입력값 받기
+
+    readline을 이용하라는 조교의 힌트로 어찌어찌 비슷한 기능을 구현하는 정도로만 짤 수 있었다. 
+    - 참고 사이트
+
+        [readline 참고](https://velog.io/@grinding_hannah/JavaScript-Node.js%EC%97%90%EC%84%9C-readline-%EC%9E%85%EB%A0%A5%EB%B0%9B%EA%B8%B0)
+        
+        [readline 참고2](https://lamarr.dev/javascript/2020/04/06/01.html)
+    
+2. 진수변환 문제를
+    - 총 3개의 함수로 구성
+        1. n진법으로 숫자 변환
+        2. n진법의 숫자를 m명이 t개의 숫자로 말할 경우의 숫자 배열 구하기
+        3. 숫자 배열 중 p번째 사람이 말해야하는 숫자 배열 구하기
+
+   n진법 변환하는 함수 만드는 데에만 오후를 보냈다. 중요한 사항은 아래와 같다.
+    - parseInt(숫자)는 정수값을 나타내어 몫을 구할 때 사용가능
+    - 10진법 이상의 경우 A~F 입력하도록 별도의 객체를 만듦.
+    - 숫자가 n보다 작을 때로 별도 구분했으나, n 이상인 코드만으로 몫이 0일때 작동함. 하여 n보다 작을 때 삭제, 0인 경우만 추가하여 수정함.
+    - 숫자를 n진수로 변환한 배열들을 합칠 때, push(...arr)를 사용하여 배열의 개별요소로 합침. 그냥 push할 경우 각 배열이 하나의 요소로 합쳐짐.
+    
+        ex) [[0], [1], [1,0]]
+    - 문제 이해가 조금 어려웠는데, m명이 t개씩 말하는 경우 배열의 길이는 총 m * t이며, n진수로 변환한 배열의 길이가 m * t 보다 작을 때까지 for문 구성함. 변환되는 숫자에 따라 m * t보다 길어질 수 있음.
+    - 별개로 m명 중 p번째 사람이 위에서 구한 배열의 m * t 미만의 항까지 index 한 후, 본인이 해당되는 값을 별도의 배열에 추가하는 함수 구성함. 
+    - 참고 사이트
+    
+        [배열합치기](https://hianna.tistory.com/397)
+        [카카오 유사문제](https://programmers.co.kr/learn/courses/30/lessons/17687)
+    
