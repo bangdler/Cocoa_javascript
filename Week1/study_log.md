@@ -217,3 +217,23 @@
         
         [정규표현식 MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript/Guide/Regular_Expressions)
     
+
+## Day 5 (2011-11-05)
+### Desktop 환경 설정
+1. 여태 맥북, 웹스톰을 사용하다가 울산에 내려와 데스크탑을 사용해야해서 환경 설정을 다시 해야만 했다. 
+2. Visual Studio를 써보려고 했는데 node.js 실행이 안되서 환경설정 등 오전 내내 실랑이를 벌였다. 또 Visual Studio 초기 설정이 자동 저장이 아니라 Code를 수정했는데도 반영이 안됐는데 이것 때문에도 한참 고민했다.
+   
+    [node.js 실행 시 인식 오류 관련 사이트](https://blog.naver.com/oyj1999karma/222499028506)
+
+
+3. Git Clone, Pull 하는 것도 어려워서 몇 번을 초기화 후 다시 Clone했다. 익숙해지려면 한참 걸릴 것 같다.
+    - Clone 시 user name 등의 정보를 가져오는 것으로 추정된다. 파일 수정 후 Commit 및 Push 할 때 별도의 id 적는 과정이 없었음. 컴퓨터에 global이 본인이기 때문인듯.
+    - Clone 은 초기에 repository를 동기화, Pull은 원격 저장소의 코드를 로컬에 merge, fetch는 로컬에 가져오나 merge하지 않고 비교만 한다.
+    
+        [git 용어 관련 사이트](https://sabarada.tistory.com/75)
+
+### Mssion - 배열 평균구하기
+1. JS에서는 평균에 대한 별도 함수가 없어 for 문으로 구성했는데 마음에 안든다. 
+2. Map을 통한 배열 순환, Math Method를 이용한 최대, 최소 구하기
+
+    [Math method 관련 사이트](https://hianna.tistory.com/487)

@@ -1,4 +1,10 @@
 
+// 함수를 5개로 구분함 
+   // getarea : figure에 맞는 함수를 실행하고 답을 출력하고 [도형, 결과]를 반환한다.
+   // getfigure : 각 도형의 넓이를 구하는 함수
+   // print... : logging 배열을 출력하는 함수
+   // make... : 매개변수를 logging 배열에 추가하는 함수
+
 let logging_figure = [];
 let logging_results = [];
 //let logArr = [];

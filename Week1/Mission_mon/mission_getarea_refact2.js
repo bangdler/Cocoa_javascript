@@ -1,3 +1,6 @@
+// 매개변수로 결과값 배열(전역변수)을 받고 계산값을 추가한 뒤 결과값 배열을 반환하도록 수정.
+// 전역변수를 함수 내에서 사용하지 않음.  
+
 
 function getArea(figure, results, figures, ...params) {
     let result;

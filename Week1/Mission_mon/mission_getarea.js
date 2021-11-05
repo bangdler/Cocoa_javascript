@@ -1,5 +1,7 @@
 console.log("hello world");
 
+// circle, rect, trapezoid 와 각 도형의 정보가 주어졌을 때 넓이를 구하는 함수
+
 var logging = [];
 var results = [];
 
