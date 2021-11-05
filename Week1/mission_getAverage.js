@@ -8,7 +8,7 @@ function getAverage(gradeArr){
             score = score + oneGrade[i];
         }
         let average = score / oneGrade.length;
-        console.log(average)
+        console.log(grades)
         return average
         })
 }
