@@ -48,14 +48,31 @@ function filterId2(array){
 
 console.log(filterId2(peoples))
 
-
+// map 사용 시 checkSpecial = true 일 때, 신규 배열에 undefined로 생성됨.
 let newpeoples3 = peoples.map(function(item) {
     if (!checkSpecial(item)) {
         return replaceNum(item);
     }
-    else {
-        return map.clear();
-    }
 })
 
 console.log(newpeoples3)
+
+
+// 특수 문자가 있는지 test 하고 있으면 false, 없으면 true를 반환하는 함수
+function checkSpecialOppose(str) {
+    const regExp = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
+    if (regExp.test(str) === true){
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+// filter 는 참인 조건만으로 배열을 구성하기 때문에 별도의 checkSpecialOppose 함수를 만듦. 안됨...
+let newpeoples4 = peoples.filter(function(item) {
+    checkSpecialOppose(item);
+    replaceNum(item);
+    }
+)
+
+console.log(newpeoples4)
