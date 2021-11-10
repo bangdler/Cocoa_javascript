@@ -1,5 +1,5 @@
 # Bandler's study note
-## Day 1 (2021-11-01)
+## Week 1 Day 1 (2021-11-01)
 
 #### Mission 1
 1. 원의 경우 반지름(또는 원의 갯수), 사각형의 경우 높이와 너비, 사다리꼴의 경우 윗변 아랫변 높이가 필요함.
@@ -128,10 +128,12 @@
 2. this, new
 
     this는 조금 찾아봤지만 바인딩, 명시, apply, call 등 개념이 어렵고 헷갈린다.
-    
+    this : 함수가 객체 안에서 사용될 때, 그 함수가 자신이 속해있는 객체를 참조할 수 있도록 약속된 키워드
     - 참고 사이트
         
         [this 의미, 명시 관련 블로그](https://191125.tistory.com/59)
+        
+        [생활코딩 - 데이터와 값을 담는 그릇으로서 객체](https://opentutorials.org/course/3332/21146)
         
         [new - MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/new)
         
@@ -194,7 +196,8 @@
 1. 정규표현식을 사용하여 특수문자, 숫자가 있는 요소를 구별할 수 있었다.
 
     ```javascript
-    // 이유는 모르겠으나 하기 블로그에서 복붙한 아래 정규표현식을 사용했을 때, true / false 값이 제대로 나오지 않았다. 그래서 두번째 방식으로 변경함. 
+    // 이유는 모르겠으나 하기 블로그에서 복붙한 아래 첫번째 정규표현식을 사용했을 때, true / false 값이 제대로 나오지 않았다. 그래서 두번째 방식으로 변경함.
+       // 첫번째의 +-= 부분에서 -가 어디에서 어디까지라는 뜻으로 오류가 발생한 것으로 확인됨.
     const regExp = /[!?@#$%^&*():;+-=~{}<>\_\[\]\|\\\"\'\,\.\/\`\₩]/g;
     const regExp = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
    
@@ -217,6 +220,7 @@
         
         [정규표현식 MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript/Guide/Regular_Expressions)
     
+2. filter와 map 의 경우 배열을 새로 생성하는데, filter는 참인 조건만 배열에 반환하고, map은 모든 값을 순회하는데 내부 조건문에서 false를 지날 경우 undefined 로 반환되어 filter를 통해 undefined를 제거해주어야했다.
 
 ## Day 5 (2011-11-05)
 ### Desktop 환경 설정
@@ -232,8 +236,16 @@
     
         [git 용어 관련 사이트](https://sabarada.tistory.com/75)
 
-### Mssion - 배열 평균구하기
+### Mssion - 배열 평균 구하기
 1. JS에서는 평균에 대한 별도 함수가 없어 for 문으로 구성했는데 마음에 안든다. 
 2. Map을 통한 배열 순환, Math Method를 이용한 최대, 최소 구하기
 
     [Math method 관련 사이트](https://hianna.tistory.com/487)
+    
+## Weekend
+### baekjoon algorithm
+1. 한 줄 입력, 여러줄 입력, 테스트 case 입력 방식에 대해 공부
+2. readline은 조금 알겠고, fs는 잘 모르겠다.
+3. 문자열을 ascii code로 변경 시 charCodeAt 사용한다. 반대는 fromCharCode
+    
+    [js 알고리즘 풀 때 입력방식 정리](https://grap3fruit.dev/blog/%EA%B5%AC%EB%A6%84(goorm),-%EB%B0%B1%EC%A4%80(BOJ)-%EC%BD%94%EB%94%A9-%ED%85%8C%EC%8A%A4%ED%8A%B8-JavaScript%EB%A1%9C-%EC%9E%85%EB%A0%A5%EB%B0%9B%EB%8A%94-%EB%B0%A9%EB%B2%95-%EC%A0%95%EB%A6%AC)

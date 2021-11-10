@@ -7,7 +7,7 @@ const matched = {
     14: 'E',
     15: 'F'
 }
-
+// number가 n보다 작을 때를 굳이 나눠줄 필요가 없다.
 // function changeBinary(n, number){
 //     let binary = [];
 //     if (number < n) {

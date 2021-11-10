@@ -1,5 +1,5 @@
 
-// 생성자 함수 HashMap : init 객체를 설정하고, init 함수 값을 참조한 새로운 hashmap 객체를 만든다.
+// 생성자 함수 HashMap : init 객체를 설정하고, init 함수 값을 참조가 아닌 복제 새로운 hashmap 객체를 만든다.
 function HashMap() {
     this.initmap = {'sample':'value'};
     this.hashmap = {};
@@ -85,6 +85,7 @@ console.log(hm.isEmpty())
 console.log(hm.keys())
 hm.replace('name', 'juyoung')
 console.log(hm.hashmap)
+console.table(hm.hashmap)
 console.log(hm.size())
 
 hm.clear()
