@@ -43,4 +43,17 @@
         [hemdi](https://github.com/hemudi/codeSquad_cocoa/blob/master/daily_study_log/log_1108/HashMap_LinkedList.js)
     
         [s](https://github.com/soralee2821/cocoa/blob/master/week2/hashmap.js#L27)     
+
+### Mission 괄호문법감지기
+1. 괄호 등 특정 문자를 찾고 분석하기 위해서 정규식 표현에 대해 공부
+
+    [드림코딩 by 엘리 - 정규식표현](https://www.youtube.com/watch?v=t3M6toIflyQ)
     
+2. 단순 for 문과 정규식 test 를 통해 괄호 갯수, 숫자 갯수를 세는 것으로 코드를 완성하였으나, 무한한 배열이 들어왔을 경우에 대해 고민해볼 필요가 있다. 아마 stack, que 개념을 활용해야 할 것 같다.
+
+## Day 4 (2021-11-11)
+
+## Mission 괄호문법감지기
+1. Stack 을 사용해야 하는 이유 : 단순히 \[ 와 \]의 갯수를 비교하는 것은 \] 가 먼저 들어오는 배열을 걸러낼 수가 없다. 이에 Stack 을 통해 \[가 먼저 들어온 후 이어서 \] 가 확인될 경우 기존 Stack에서 \[ 를 pop 해주면서 중첩수를 세는 식으로 변경이 필요했다.
+2. 원소를 세는 방법 : 초반에는 Stack 에 원소도 포함하려고 했으나, 이 경우 \] 가 들어왔을 때 pop 해주면서 중첩수와 원소 갯수를 세기 위해서는 코드가 굉장히 복잡해진다. 이에 별도로 element 에 ',' 로 구분하여 문자를 더해주고 ',' 나 \] 가 나왔을 경우 조건을 통해 element count를 해주면서 초기화를 해주었다.
+3. 역시나 문제 이해가 힘들었고, stack 을 구현하는 방법, 문제에 적용하는 방법에 대해 스스로 떠올리기는 아직 무리인 것 같다...
