@@ -32,3 +32,35 @@ myHashTable[hashFunction(1234)] = 1234;
 myHashTable[hashFunction(5678)] = 5678;
 
 console.log(myHashTable); // [empty, 1991, empty, 5678, 1234]
+
+
+// indextable = this.hashtable[index] 가 필요한 이유 test. 기존 빈 배열의 경우 undefined 라서 깊은 복사가 된다. 빈 배열을 먼저 지정해주면 주소 참조에 의한 얕은 복사가 된다.
+
+function HashMap(size = 23) {
+    this.itemCount = 0;
+    this.tableSize = size;
+    this.hashTable = new Array(this.tableSize);
+}
+
+HashMap.prototype.getHashAddress = function(key){
+    let asciiSum = 0;
+    key.split('').forEach(function(keyString) {
+        asciiSum += keyString.charCodeAt();
+    } )
+    const hashIndex = asciiSum % this.tableSize;
+    return hashIndex
+}
+
+HashMap.prototype.put = function(key, value) {
+    const index = this.getHashAddress(key);
+    this.hashTable[index] = [];                     // 빈배열 지정
+    let indexTable = this.hashTable[index]          // 얕은 복사
+    indexTable.push([key, value]);
+    this.itemCount += 1;
+    }
+
+
+let hm = new HashMap()
+
+hm.put('apple', 'monkey')
+console.log(hm.hashTable)

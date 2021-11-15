@@ -1,31 +1,14 @@
 
 // divisor 로 나누어 떨어지는 숫자를 오름차순으로 정렬하여 반환한다.
 
-const readline = require('readline');
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-})
 
-let data = [];
-let divideArray = [];
-let results = [];
-rl.on('line', function(line) {
-    data = line.split(' ').map((el) => el);
-    console.log(data)
-    rl.close();
-})
-rl.on('close', function() {
-    let arrayData = data[0].replace(/[\[\]]/gi, '');
-    let array = arrayData.split(',');
-    let divisor = Number(data[1]);
-    console.log(array)
-    divideArray = getNoRemainder(array, divisor)
-    console.log(divideArray)
+function solution (arr, divisor) {
+    let divideArray = [];
+    let results = [];
+    divideArray = getNoRemainder(arr, divisor)
     results = sortAscending(divideArray)
-    console.log(results)
     return results;
-})
+}
 
 function getNoRemainder (array, divisor) {
     let noRemainderArray = [];
