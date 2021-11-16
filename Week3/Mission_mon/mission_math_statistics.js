@@ -54,7 +54,7 @@ console.log(getDeviation(makeArray(math_data)))
 
 // 분산 구하기
 function getVariance(array) {
-    let deviSquare = getDeviation(array).map((score) => score ** 2);
+    let deviSquare = getDeviation(array).map((score) => Math.pow(score, 2));
     let sumDeviSquare =  deviSquare.reduce(function(acc, curr) {
         return acc + curr;
     })
@@ -67,7 +67,7 @@ console.log(getVariance(makeArray(math_data)))
 // 표준편차 구하기
 function getStdDevi(array) {
     let variance = getVariance(array);
-    let standardDevi = (variance ** 0.5).toFixed(2);
+    let standardDevi = Math.sqrt(variance).toFixed(2);
     return standardDevi;
 }
 
