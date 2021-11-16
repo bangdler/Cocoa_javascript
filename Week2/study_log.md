@@ -89,9 +89,12 @@
     - 그래서 containskey를 안쓰고 유사한 알고리즘을 함수마다 다시 구현하려고 했으나 그럴 경우 함수의 기능이 단순화 되지 않아 추후 수정할 때 오히려 안좋을 수 있다.
     - this.hashtable[index] 가 너무 길어서 새로운 지역변수를 지정했을 때 값만 복사되고 주소가 복사되지 않는 것 같다. 
     - 그래서 코드 마지막 줄에 항상 this.hashTable[index] = indexTable; 를 쓰게 되는데 참조 범위에 대해 공부해봐야겠다.
+    - 알아보니 빈 배열에 각 Index 값이 undefined 여서 자료형 - 깊은 복사되어 그런 것이었다.
     - clear를 구현할 때 새로운 빈 배열을 생성했는데, 기존 배열을 삭제해주는게 메모리에 부담을 덜 주는지? 궁금하다.
     
         [기본형과 자료형 - 깊은 복사, 얕은 복사](https://webclub.tistory.com/638)
+        
+        [garbage collection](http://theeye.pe.kr/archives/2872)
     
  2. 배열 미션 추가 
     - for in 은 객체 순환, for of 는 배열 순환...
@@ -102,7 +105,7 @@
     
         [] 을 쓰는 경우 : 객체 안의 key 값을 임의의 변수로 받아서 사용할 때 
         
-        [object.key 와 object['key'] 의 차이](https://medium.com/sjk5766/javascript-object-key-vs-object-key-%EC%B0%A8%EC%9D%B4-3c21eb49b763) 
+        [object.key 와 object[key] 의 차이](https://medium.com/sjk5766/javascript-object-key-vs-object-key-%EC%B0%A8%EC%9D%B4-3c21eb49b763) 
         
  3. reduce method 만들기
     - reduce는 배열에 각 요소에 대해 주어진 call back 함수를 실행하고 반환값을 누적하며, 하나의 결과값으로 반환한다.그래서 reduce 라고 한다.. (주로 현재값과 누적된 반환값을 사용한다.)
