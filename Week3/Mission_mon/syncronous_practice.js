@@ -24,8 +24,8 @@ function plus() {
     return a;
 }
 // 비동기
-const result = plus();
-console.log('result :', result);
+//const result = plus();
+//console.log('result :', result);
 
 const baseData = [1,2,3,4,5,6,100];
 
@@ -53,7 +53,7 @@ function sync2() {
     });
 }
 // 비동기 + 동기 + 동기
-asyncRun1(baseData, idx =>console.log(idx));
+//asyncRun1(baseData, idx =>console.log(idx));
 // sync();
 // sync2();
 
@@ -74,4 +74,64 @@ const asyncRun2 = (arr, fn) => {
     });
 }
 
-asyncRun2(baseData, idx =>console.log(idx))
+//asyncRun2(baseData, idx =>console.log(idx))
+
+// 아래 부분부터는 추가 공부가 필요함...
+
+// promise 맛보기
+function runAsync(time) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve('서버에서 온 사람입니다');
+        }, time);
+    });
+}
+
+function runAsync2(time) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve('3명입니다');
+        }, time);
+    });
+}
+
+const cb1 = result => {
+    console.log('누구세요? :', result);
+    return runAsync2(3000);
+};
+
+const cb2 = result2 => {
+    console.log('몇명이에요? :', result2);
+}
+
+function main() {
+    const asyncObj = runAsync(1000);
+    asyncObj.then(cb1).then(cb2);
+    console.log('함수는 종료');
+}
+
+//main();
+
+// async, await 사용
+async function main2 () {
+    const str1 = await runAsync(1000);
+    cb1(str1);
+
+    const str2 = await runAsync2(1000);
+    cb2(str2);
+    console.log('함수는 종료');
+}
+
+//main2()
+
+// result 불러오기, async 비교
+// function run() {
+//     const result = main2();
+//     console.log('함수는 종료');
+// }
+
+async function run() {
+    const result = await main2();
+    console.log(result);
+}
+run();

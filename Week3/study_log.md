@@ -22,3 +22,12 @@
     
        [퀵소트 코드 구현 참고](https://jun-choi-4928.medium.com/javascript%EB%A1%9C-quick-sort-%ED%80%B5-%EC%A0%95%EB%A0%AC-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0-76bf539abc0d)
     
+6. readline 공부
+    - 유튜브 보고 연습 
+        
+        [난수 만들기](https://hianna.tistory.com/454)
+        
+        [readline 모듈 초급강의](https://www.youtube.com/watch?v=vU6OTnhj3wM)
+        
+        
+        
