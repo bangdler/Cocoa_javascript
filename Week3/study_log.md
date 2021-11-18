@@ -50,6 +50,13 @@
 
     [코드스쿼드 유튜브 Html, css, js #1](https://youtu.be/scEcUQKZ5ik)
 
+7. 생활코딩 html, css, js 강의
+    - form tag 는 사용자 입력 정보를 받아 그 값을 다른 url로 넘길 때 사용
+    - label 은 for 속성을 사용하여 다른 요소와 결합한다. input, button 등과 사용 (다른 요소의 Id 속성값과 같아야 함.)
+    - css를 위한 tag : div 는 줄바꿈이 있는 무색무취 태그 / span 은 줄바꿈이 없는 무색무취 태그
+        
+        [Html tag reference - TCP school](http://tcpschool.com/html-tags/form)
+        
 6. 참고사이트
     
     [Html, Js 관련 기술블로](https://kyounghwan01.github.io/blog/JS/JSbasic/getElementById/#%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%87%E1%85%A5%E1%86%B8)
@@ -59,6 +66,8 @@
     [게임 - 선택자 맞추기](https://flukeout.github.io/)
     
     [게임 - flex box](https://flexboxfroggy.com/#ko)
+    
+    [script tag - defer / async](https://ko.javascript.info/script-async-defer)
     
 ### 수업
 1. Browser Rendering 이란? url 주소 등에서 입력 받은 정보를 통해 네트워크 통신하여 html, css, js 등을 응답 받아 화면에 표시하는 방법

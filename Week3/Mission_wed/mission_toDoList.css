@@ -1,0 +1,49 @@
+
+
+body {
+    color: darkgreen;
+    font-family: Symbol, "BM Hanna Pro", sans-serif;
+}
+.wrap {
+    padding: 0 20px;
+    width: 100%;
+    max-width: 640px;
+}
+.header {
+    margin: 24px 0 24px;
+}
+h2 {
+    color: orange;
+}
+.user {
+    text-align: right;
+    padding-right: 10%;
+}
+.today {
+    margin-top: 12px;
+    text-align: right;
+    padding-right: 10%
+}
+.inputForm {
+    background: #e9ecef;
+    border-radius: 4px;
+    margin: 12px 10%;
+    padding: 10px;
+}
+label {
+    color: salmon;
+}
+.inputTodo {
+    background: #e9ecef;
+    min-width: 69%;
+    border: none;
+}
+.addButton {
+    width: 10%;
+    border-radius: 4px;
+    font-size: 16px;
+}
+.list {
+    margin-top: 20px;
+    padding: 10px;
+}
