@@ -28,6 +28,48 @@
         [난수 만들기](https://hianna.tistory.com/454)
         
         [readline 모듈 초급강의](https://www.youtube.com/watch?v=vU6OTnhj3wM)
-        
-        
-        
+    
+    - mission은 readline question 만 써서 우선 과목 지정, 과목에 대한 점수를 객체 안의 배열에 넣는 것으로 구현해봤는데 close를 한번 받으면 끝이기 때문에 계속 값을 받도록 구현하기가 어려웠다.
+    
+### Mission ToDoList
+
+1. Html 문법이 생소하여 생활코딩 복습하였음. 
+2. 움직이는 부분과 움직이지 않는 부분을 구분하여 html로 움직이지 않는 부분에 대한 틀을 만들자.
+3. 휴지통 그림을 넣으려면 사이트의 npm 을 설치해줘야 한다.
+ 
+    npm install --save @fortawesome/fontawesome-free
+    
+    ```html
+   <!-- 이렇게 파일경로를 추가해줘야 불러올 수 있다. -->
+    <script defer src="../../node_modules/@fortawesome/fontawesome-free/js/regular.js"></script>
+    <script defer src="../../node_modules/@fortawesome/fontawesome-free/js/fontawesome.js"></script>    
+    ```    
+   
+4. ToDoList 에서 add, remove까지는 어찌 구현을 하였으나 check box 취소선 구현이 안되더라. 다른 사이트를 참고하려고 해도 html 구조가 달라서 적용이 어려웠다. 초기에 구조를 잘 잡는 것도 중요한 것 같다.
+5. 크롱의 html 1~3 강의 보며 따라하기.
+
+    [코드스쿼드 유튜브 Html, css, js #1](https://youtu.be/scEcUQKZ5ik)
+
+6. 참고사이트
+    
+    [Html, Js 관련 기술블로](https://kyounghwan01.github.io/blog/JS/JSbasic/getElementById/#%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%87%E1%85%A5%E1%86%B8)
+     
+    [css code 작성 규칙](https://jeonghakhur.gitbooks.io/frontend-coding-convention/content/css/)
+    
+    [게임 - 선택자 맞추기](https://flukeout.github.io/)
+    
+    [게임 - flex box](https://flexboxfroggy.com/#ko)
+    
+### 수업
+1. Browser Rendering 이란? url 주소 등에서 입력 받은 정보를 통해 네트워크 통신하여 html, css, js 등을 응답 받아 화면에 표시하는 방법
+2. 이 때 Tree 구조로 보관하고 출력한다.
+3. html 문법 관련
+    - 하위 class 지정 시 공백을 넣는다. 예) .class1 .class2
+    - id 는 #, class 는 . , element 는 element 로 표기
+    - Position, Box model 공부할 것
+    - document 는 dom tree 구조의 최상위 객체인 html을 의미한다.
+    - addEventListener 는 비동기 method 로 e 는 브라우저가 넣어주는 이벤트 객체이다. 
+    - e.target는 이벤트가 발생한 요소이다.
+    
+    
+    

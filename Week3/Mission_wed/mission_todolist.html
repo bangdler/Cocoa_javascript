@@ -1,10 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>To do list</title>
+    <script defer src="../../node_modules/@fortawesome/fontawesome-free/js/solid.js"></script>
+    <script defer src="../../node_modules/@fortawesome/fontawesome-free/js/regular.js"></script>
+    <script defer src="../../node_modules/@fortawesome/fontawesome-free/js/fontawesome.js"></script>
+    <style>
+        .h1 {
+            background-color : black;
+            color : gainsboro;
+            font-size : 150%;
+            padding-left: 40px
+        }
+        .h2 {
+            padding-left : 20%;
+            margin-top : 50px;
+            font-size : 200%
+        }
+        .newtask {
+            width : 300px;
+            font-size : 15px;
+            margin-left : 24%
+        }
+        .tasklist {
+            padding-top: 30px;
+        }
+        .add {
+            width : 50px;
+            background-color: cornflowerblue;
+            color : white;
+            font-size : 15px;
+            margin-left : 15px;
+        }
+        .checkbox {
+            margin-right : 0;
+            margin-left : 24%
+        }
+        .task {
+            width : 300px;
+            font-size : 15px;
+            margin-left : 10px;
+        }
+        .delete {
+            font-size : 20px;
+            margin-left : 10px;
+        }
+        .checktoggle {
+            text-decoration: line-through;
+            color : darkgrey;
+        }
+    </style>
 </head>
 <body>
-$END$
+    <h1 class = "h1">
+        ToDo list
+    </h1>
+    <h2 class = "h2">
+        ToDo List
+    </h2>
+    <div>
+        <input class = "newtask"; type = "text"; value = "New Task";>
+        <input class = "add"; type = "button"; value = "Add">
+    </div>
+    <div class = "tasks">
+        <div class = "tasklist">
+            <input class = "checkbox"; type = "checkbox";>
+            <input class = "task"; type = "text"; value = "my task"; readonly>
+            <button class = "delete"; type = "button";>
+                <i class="far fa-trash-alt"></i>
+            </button>
+        </div>
+    </div>
+<script src= "./script.js"></script>
 </body>
 </html>
