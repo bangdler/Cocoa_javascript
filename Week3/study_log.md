@@ -50,14 +50,14 @@
 
     [코드스쿼드 유튜브 Html, css, js #1](https://youtu.be/scEcUQKZ5ik)
 
-7. 생활코딩 html, css, js 강의
+6. 생활코딩 html, css, js 강의
     - form tag 는 사용자 입력 정보를 받아 그 값을 다른 url로 넘길 때 사용
     - label 은 for 속성을 사용하여 다른 요소와 결합한다. input, button 등과 사용 (다른 요소의 Id 속성값과 같아야 함.)
     - css를 위한 tag : div 는 줄바꿈이 있는 무색무취 태그 / span 은 줄바꿈이 없는 무색무취 태그
         
         [Html tag reference - TCP school](http://tcpschool.com/html-tags/form)
         
-6. 참고사이트
+7. 참고사이트
     
     [Html, Js 관련 기술블로](https://kyounghwan01.github.io/blog/JS/JSbasic/getElementById/#%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%87%E1%85%A5%E1%86%B8)
      
@@ -80,5 +80,16 @@
     - addEventListener 는 비동기 method 로 e 는 브라우저가 넣어주는 이벤트 객체이다. 
     - e.target는 이벤트가 발생한 요소이다.
     
-    
-    
+### 주말
+1. toDoList 다시 만들기를 하려고 yellow님 코드를 공부하며 비슷하게 작성하는데 자꾸 실행이 안되는 문제를 겪었다.
+2. 디버깅과의 사투 끝에 알게 된 사실은 this 가 생성자 내의 method를 불러오지 못하고 eventListener의 대상을 지칭한다는 것이다.
+3. 이유는 바로 function 을 어떻게 구현했는가에 따라 생성자 내에 bind 여부가 결정되기 때문. 허나 아래 사이트를 보면 함부로 사용 시 class 상속 시 문제가 발생할 수 있다.
+  
+    [애로우 함수 사용 시 차이점](https://simsimjae.tistory.com/452)
+    ```javascript
+       // checkInput 함수 안에 불러야할 method는 bangdler라는 constructor 내 method가 되어야 함.
+       // 애로우 함수를 사용하면 this 가 method를 지칭함. 이로써 문제가 해결되었다.
+       $addButton.addEventListener('click', bangdler.checkInput)
+    ```
+
+4. 2주차 알고리즘 한문제 풀었다.    
