@@ -9,18 +9,68 @@ function select(selector) {
 }
 
 class TodoModelManager {
+    constructor(storageKey) {
+        this.tempStorage = [];
+        this.storageKey = storageKey;
+    }
+
+    getStoredData() {
+        const listData = localStorage.getItem(this.storageKey);
+        this.tempStorage = (listData !== null ? JSON.parse(listData) : new Array());
+        return this.tempStorage;
+    }
+
+    setLocalStorage() {
+        localStorage.setItem(this.storageKey, JSON.stringify(this.tempStorage));
+    }
+
+    saveListData(id, contents, checked = false) {
+        this.tempStorage.push({
+            id : id,
+            contents : contents,
+            checked : checked
+        })
+        this.setLocalStorage();
+    }
+
+    getStorageIndex(id) {
+        let numId = Number(id);
+        for (let i = 0; i < this.tempStorage.length; i++) {
+            if (numId === this.tempStorage[i]['id']) {
+                return i;
+            }
+        }
+        return false;
+    }
+
+    deleteList(id) {
+        let index = this.getStorageIndex(id)
+        if (index >= 0) {
+            this.tempStorage.splice(index, 1);
+            this.setLocalStorage();
+        }
+    }
+
+    checkList(id) {
+        let index = this.getStorageIndex(id)
+        if (index >= 0) {
+            this.tempStorage[index]['checked'] = 'checked';
+            this.setLocalStorage();
+        }
+    }
 
 }
 
 class TodoViewManager {
-    constructor () {
+    constructor() {
         this.$inputTodo = select('.inputTodo');
         this.$todoList = select('.todoList');
         this.$doneList = select('.doneList');
-        this.$today = select('.today')
+        this.request = function(){};
     }
 
-    printToday () {
+    printToday() {
+        this.$today = select('.today')
         const today = new Date();
         const weekArray = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const month = (today.getMonth() + 1);
@@ -31,28 +81,47 @@ class TodoViewManager {
         this.$today.textContent = todayContent;
     };
 
-    renderTodo(input) {
-        const $listItem = document.createElement('li');
-        const $checkBox = document.createElement('input')
-        const $content = document.createElement('span')
-        const $delete = document.createElement('button')
+    requestEvent(controlFunction) {
+        this.request = controlFunction
+    }
 
-        $listItem.className = 'listItem';
-        $checkBox.className = 'checkBox';
-        $content.className = 'content';
-        $delete.className = 'delete';
-        $checkBox.type = 'checkbox'
-        $delete.textContent = '삭제'
-        $content.textContent = input;
+    renderTodo(id, contents, checked=false) {
+        const list = this.createList(id);
+        const checkBox = this.createCheckBox();
+        const contentsSpan = this.createSpan(contents);
+        const deleteBtn = this.createDelete();
 
-        this.makeChild($listItem, $checkBox, $content, $delete)
+        if(checked) {
+            const checkBox = select('.checkBox')
+            this.completeTodo(checkBox)
+        }
+        this.makeChild(list, checkBox, contentsSpan, deleteBtn)
+        this.$todoList.appendChild(list);
+        this.countList();
 
-
-        this.$todoList.appendChild($listItem)
-        this.handleDeleteButton($delete)
-        this.handleCheckBox($checkBox)
-        return $listItem;
     };
+
+    createList(id) {
+        const $listItem = document.createElement('li');
+        $listItem.id = id;
+        $listItem.className = 'listItem';
+        return $listItem;
+    }
+
+    createSpan(contents) {
+        const $content = document.createElement('span')
+        $content.className = 'content';
+        $content.textContent = contents;
+        return $content;
+    }
+
+    createDelete() {
+        const $delete = document.createElement('button')
+        $delete.className = 'delete';
+        $delete.textContent = '삭제'
+        this.handleDeleteButton($delete);
+        return $delete;
+    }
 
     handleDeleteButton(button) {
         button.addEventListener('click', (e) => {this.deleteTodo(e)})
@@ -60,16 +129,31 @@ class TodoViewManager {
 
     deleteTodo(event) {
         const deleteItem = event.target.parentNode;
+        const deleteItemId = deleteItem.getAttribute('id')
         deleteItem.remove();
+        this.request('remove', deleteItemId)
+        this.countList();
+    }
+
+    createCheckBox() {
+        const $checkBox = document.createElement('input')
+        $checkBox.type = 'checkbox'
+        $checkBox.className = 'checkBox';
+        this.handleCheckBox($checkBox)
+        return $checkBox;
     }
 
     handleCheckBox(checkbox) {
-        checkbox.addEventListener('click', (e) => {this.completeTodo(e)})
+        checkbox.addEventListener('click', (e) => {this.completeTodo(checkbox)})
     }
 
-    completeTodo(event) {
-        const doneItem = event.target.parentNode;
-        this.$doneList.appendChild(doneItem)
+    completeTodo(checkbox) {
+        const doneItem = checkbox.parentNode;
+        const doneItemId = doneItem.getAttribute('id');
+        this.$doneList.appendChild(doneItem);
+        checkbox.remove();
+        this.request('check', doneItemId)
+        this.countList();
     }
 
     makeChild (parent, ...child) {
@@ -79,7 +163,13 @@ class TodoViewManager {
         return parent;
     };
 
-}
+    countList() {
+        const $todoCount = select('.todoCount')
+        $todoCount.innerText = this.$todoList.childElementCount
+        const $doneCount = select('.doneCount')
+        $doneCount.innerText = this.$doneList.childElementCount
+    }
+    }
 
 class TodoController {
     constructor(model, view) {
@@ -88,9 +178,30 @@ class TodoController {
     }
 
     init() {
-        this.listenAddButton()
-        this.view.printToday()
+        this.view.requestEvent(this.replyEvent.bind(this))
+        this.setStoredData();
+        this.listenAddButton();
+        this.allClear();
+        this.view.printToday();
 
+    }
+
+    replyEvent(event, id) {
+        if (event === 'remove') {
+            this.model.deleteList(id);
+        }
+        else if (event === 'check') {
+            this.model.checkList(id);
+        }
+    }
+
+    setStoredData() {
+        const storedData = this.model.getStoredData();
+        if(storedData.length === 0) return;
+
+        for(const data of storedData) {
+            this.view.renderTodo(data['id'], data['contents'], data['checked'])
+        }
     }
 
     listenAddButton() {
@@ -100,9 +211,18 @@ class TodoController {
 
     handleAddButton(e) {
         e.preventDefault();
-        const taskInput = this.view.$inputTodo.value;
-        if(this.isEmpty(taskInput)) return;
-        this.view.renderTodo(taskInput)
+        let contents = this.view.$inputTodo.value;
+        const id = this.getListId();
+
+        if(this.isEmpty(contents)) return;
+        this.clearInput();
+        this.view.renderTodo(id, contents);
+        this.model.saveListData(id, contents);
+    }
+
+    getListId() {
+        const timeId = new Date();
+        return timeId.getTime();
     }
 
     isEmpty(task) {
@@ -112,11 +232,28 @@ class TodoController {
         return false;
     }
 
+    clearInput() {
+        this.view.$inputTodo.value = '';
+    }
+
+    allClear() {
+        const $allClear = select('.allClear')
+        $allClear.addEventListener('click', (e) => {this.handleAllClear(e)})
+    }
+
+    handleAllClear(e) {
+        e.preventDefault();
+        this.view.$todoList = null;
+        this.view.$doneList = null;
+        this.model.tempStorage = [];
+        this.model.setLocalStorage();
+        location.reload();
+    }
 
 }
 
 const bangView = new TodoViewManager();
-const bangModel = new TodoModelManager();
+const bangModel = new TodoModelManager('localKey');
 const bangControl = new TodoController(bangModel, bangView);
 
 bangControl.init()
