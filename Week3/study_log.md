@@ -87,9 +87,29 @@
   
     [애로우 함수 사용 시 차이점](https://simsimjae.tistory.com/452)
     ```javascript
-       // checkInput 함수 안에 불러야할 method는 bangdler라는 constructor 내 method가 되어야 함.
+       // addEventListner 의 checkInput 실행 시 불러야할 method는 TodoManager class 내 method가 되어야 함.
+       // 허나 일반 함수로 구현 시 내부 method 의 this 는 addButton 을 가르켜 null 을 반환했다.
        // 애로우 함수를 사용하면 this 가 method를 지칭함. 이로써 문제가 해결되었다.
+       
        $addButton.addEventListener('click', bangdler.checkInput)
+       
+       class TodoManager {
+           constructor(userName) {
+               this.user = userName
+           };
+           checkInput = (event) => {
+               event.preventDefault();     //이벤트가 발생하지 않도록 막아준다.
+               if(!currentInput) {
+                   alert('내용을 입력해주세요')
+                   return;
+               }
+               else {
+                   let listItem = this.makeList(currentInput)  // this = TodoManger가 되어야함.
+                   $list.append(listItem)
+                   this.clear();
+               }
+           }
+       }
     ```
 
 4. 2주차 알고리즘 한문제 풀었다.    

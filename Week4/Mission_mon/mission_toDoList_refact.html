@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To Do List</title>
+    <script defer src="mission_toDoList_refact.js"></script>
+    <script defer src="../../node_modules/@fortawesome/fontawesome-free/js/solid.js"></script>
+    <script defer src="../../node_modules/@fortawesome/fontawesome-free/js/regular.js"></script>
+    <script defer src="../../node_modules/@fortawesome/fontawesome-free/js/fontawesome.js"></script>
+    <link rel="stylesheet" href="mission_toDoList_refact.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+</head>
+<body>
+    <div class="wrap">
+        <header class="header">
+            <h2>To Do List</h2>
+            <h3 class="user">(사용자)</h3>
+            <div class="today">(날짜)</div>
+        </header>
+        <section class="main">
+            <form action="" class="inputForm">
+                <label>List 추가
+                    <input
+                            class="inputTodo"
+                            type="text"
+                            placeholder="input task..."
+                    />
+                </label>
+                <button class="addButton"><i class="fas fa-plus"></i></button>
+            </form>
+            <h4>할 일 <span class="todoCount">0</span></h4>
+            <ul class="todoList">
+
+            </ul>
+            <h4>한 일 <span class="doneCount">0</span></h4>
+            <ul class="doneList">
+
+            </ul>
+        </section>
+    </div>
+
+</body>
+</html>
