@@ -65,4 +65,14 @@ export default class TodoModelManager {
             this.setLocalStorage();
         }
     }
+
+    setUserStorage(userText) {
+        localStorage.setItem('user', userText);
+    }
+
+    getUserStorage() {
+        const userData = localStorage.getItem('user');
+        if(userData === null || undefined) return 'user name'
+        return userData;
+    }
 }

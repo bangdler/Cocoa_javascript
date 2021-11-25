@@ -12,8 +12,8 @@ export default class TodoController {
     init() {
         this.view.requestEvent(this.replyEvent.bind(this))
         this.setStoredData();
+        this.setStoredUser();
         this.listenAddButton();
-        this.allClear();
         this.view.printToday();
 
     }
@@ -45,6 +45,9 @@ export default class TodoController {
     listenAddButton() {
         const $addButton = select('.addButton')
         $addButton.addEventListener('click', (e) => {this.handleAddButton(e)})
+
+        const $allClear = select('.allClear')
+        $allClear.addEventListener('click', (e) => {this.handleAllClear(e)})
     }
 
     handleAddButton(e) {
@@ -76,17 +79,39 @@ export default class TodoController {
         this.view.$inputTodo.value = '';
     }
 
-    allClear() {
-        const $allClear = select('.allClear')
-        $allClear.addEventListener('click', (e) => {this.handleAllClear(e)})
-    }
-
     handleAllClear(e) {
         e.preventDefault();
-        this.view.$todoList = null;
-        this.view.$doneList = null;
         this.model.tempStorage = [];
         this.model.setLocalStorage();
         location.reload();
     }
+
+    // 사용자 이름 setting
+    setStoredUser() {
+        const $user = select('.user')
+        $user.innerText = this.model.getUserStorage();
+        this.listenUserInput($user)
+    }
+
+    listenUserInput(user) {
+        user.addEventListener('dblclick', (e) => {this.handleUserInput(e)})
+    }
+
+    handleUserInput(event) {
+        const user = event.target;
+        user.contentEditable = 'true'
+
+        user.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter') {
+                let userText = user.textContent
+                if (userText === null) {
+                    userText = '사용자 이름';  // 공백 시 사용자 이름 반영이 안됨.
+                }
+                this.model.setUserStorage(userText)
+                user.contentEditable = 'false'
+                this.listenUserInput(user)
+            }
+        })
+    }
+
 }
