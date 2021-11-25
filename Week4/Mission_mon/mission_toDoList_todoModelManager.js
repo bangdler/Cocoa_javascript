@@ -51,9 +51,17 @@ export default class TodoModelManager {
     }
 
     checkList(id) {
-        let index = this.getStorageIndex(id)
+        let index = this.getStorageIndex(id);
         if (index >= 0) {
             this.tempStorage[index]['checked'] = 'checked';
+            this.setLocalStorage();
+        }
+    }
+
+    modifyList(id, contents) {
+        let index = this.getStorageIndex(id);
+        if (index >= 0) {
+            this.tempStorage[index]['contents'] = contents;
             this.setLocalStorage();
         }
     }

@@ -19,12 +19,15 @@ export default class TodoController {
     }
 
     // View 의 요청 동작을 대신 전달 받아 Model 메소드를 실행.
-    replyEvent(event, id) {
+    replyEvent(event, id, contents = '') {
         if (event === 'remove') {
             this.model.deleteList(id);
         }
         else if (event === 'check') {
             this.model.checkList(id);
+        }
+        else if (event === 'modify') {
+            this.model.modifyList(id, contents);
         }
     }
 

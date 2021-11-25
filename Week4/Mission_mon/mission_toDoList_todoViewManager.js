@@ -23,7 +23,7 @@ export default class TodoViewManager {
 
         let todayContent = `${month}월 ${date}일 ${day}`
         this.$today.textContent = todayContent;
-    };
+    }
 
     // Controller 의 함수를 이용하기 위한 메소드. 매개변수로 controller 함수를 받아 필요한 동작을 요청한다.
     requestEvent(controlFunction) {
@@ -36,16 +36,16 @@ export default class TodoViewManager {
         const checkBox = this.createCheckBox();
         const contentsSpan = this.createSpan(contents);
         const deleteBtn = this.createDelete();
+        const modifyBtn = this.createModify();
 
+        this.makeChild(list, checkBox, contentsSpan, modifyBtn, deleteBtn )
         if(checked) {
-            const checkBox = select('.checkBox')
             this.completeTodo(checkBox)
         }
-        this.makeChild(list, checkBox, contentsSpan, deleteBtn)
         this.$todoList.appendChild(list);
         this.countList();
 
-    };
+    }
 
     createList(id) {
         const $listItem = document.createElement('li');
@@ -67,6 +67,47 @@ export default class TodoViewManager {
         $delete.textContent = '삭제'
         this.handleDeleteButton($delete);
         return $delete;
+    }
+
+    createModify() {
+        const $modify = document.createElement('button')
+        $modify.className = 'modify';
+        $modify.textContent = '수정';
+        this.handleModifyButton($modify);
+        return $modify;
+    }
+
+    makeChild (parent, ...child) {
+        child.forEach(function(element) {
+            parent.appendChild(element);
+        })
+        return parent;
+    }
+
+    // 수정 이벤트 발생
+    handleModifyButton(button) {
+        button.addEventListener('click', (e) => this.modifyTodo(e))
+    }
+
+    modifyTodo(event) {
+        const modifiedItem = event.target.parentNode;
+        const contentsNode = modifiedItem.childNodes[1]
+        const modifiedNode = modifiedItem.childNodes[2]
+        const modifiedItemId = modifiedItem.getAttribute('id')
+        contentsNode.contentEditable = 'true';
+        modifiedNode.textContent = '수정완료'
+        this.handleModifyCompleteButton(modifiedNode, contentsNode, modifiedItemId);
+    }
+
+    // 수정완료 이벤트 발생
+    handleModifyCompleteButton(button, contents, modifiedItemId) {
+        button.addEventListener('click', (e) => this.modifyCompleteTodo(contents, modifiedItemId))
+    }
+
+    modifyCompleteTodo(contents, modifiedItemId) {
+        contents.contentEditable = false;
+        const contentsText = contents.innerText;
+        this.request('modify', modifiedItemId, contentsText);
     }
 
     // 삭제 이벤트 발생
@@ -95,21 +136,17 @@ export default class TodoViewManager {
         checkbox.addEventListener('click', (e) => {this.completeTodo(checkbox)})
     }
 
+
     completeTodo(checkbox) {
         const doneItem = checkbox.parentNode;
         const doneItemId = doneItem.getAttribute('id');
+        const modifyButton = doneItem.childNodes[2];
         this.$doneList.appendChild(doneItem);
         checkbox.remove();
+        modifyButton.remove();
         this.request('check', doneItemId)
         this.countList();
     }
-
-    makeChild (parent, ...child) {
-        child.forEach(function(element) {
-            parent.appendChild(element);
-        })
-        return parent;
-    };
 
     countList() {
         const $todoCount = select('.todoCount')
