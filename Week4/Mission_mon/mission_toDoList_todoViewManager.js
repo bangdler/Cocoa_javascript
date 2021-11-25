@@ -41,6 +41,7 @@ export default class TodoViewManager {
         this.makeChild(list, checkBox, contentsSpan, modifyBtn, deleteBtn )
         if(checked) {
             this.completeTodo(checkBox)
+            return;
         }
         this.$todoList.appendChild(list);
         this.countList();
@@ -101,13 +102,15 @@ export default class TodoViewManager {
 
     // 수정완료 이벤트 발생
     handleModifyCompleteButton(button, contents, modifiedItemId) {
-        button.addEventListener('click', (e) => this.modifyCompleteTodo(contents, modifiedItemId))
+        button.addEventListener('click', (e) => this.modifyCompleteTodo(button, contents, modifiedItemId))
     }
 
-    modifyCompleteTodo(contents, modifiedItemId) {
+    modifyCompleteTodo(button, contents, modifiedItemId) {
         contents.contentEditable = false;
         const contentsText = contents.innerText;
         this.request('modify', modifiedItemId, contentsText);
+        button.textContent = '수정'
+        this.handleModifyButton(button);
     }
 
     // 삭제 이벤트 발생

@@ -67,6 +67,7 @@ export default class TodoController {
     isEmpty(task) {
         if(task === "") {
             alert('내용을 입력해주세요')
+            return true;
         }
         return false;
     }
