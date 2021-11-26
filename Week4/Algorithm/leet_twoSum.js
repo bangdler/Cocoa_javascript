@@ -47,4 +47,4 @@ const target = 6
 const nums2 = [1,-12, -4, 10, -2, 4, 0]
 const target2 = -8
 
-console.log(twoSum2(nums2, target2))
+console.log(twoSum(nums2, target2))
