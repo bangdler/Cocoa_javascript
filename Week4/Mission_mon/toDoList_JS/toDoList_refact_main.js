@@ -4,9 +4,9 @@
 
 // 각 class 를 불러와 실행
 
-import TodoViewManager from "./mission_toDoList_todoViewManager.js";
-import TodoModelManager from "./mission_toDoList_todoModelManager.js";
-import TodoController from "./mission_toDoList_todoController.js";
+import TodoViewManager from "./toDoList_todoViewManager.js";
+import TodoModelManager from "./toDoList_todoModelManager.js";
+import TodoController from "./toDoList_todoController.js";
 
 const bangView = new TodoViewManager();
 const bangModel = new TodoModelManager('localKey');
