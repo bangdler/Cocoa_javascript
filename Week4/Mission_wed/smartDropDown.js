@@ -1,7 +1,4 @@
 
-
-
-
 const $djList = document.querySelector(".djList")
 const $djCount = document.querySelector(".djCount")
 
@@ -103,6 +100,5 @@ function setTimeForMousemove() {
         mousemove = true;
     }, 500)
 }
-
 
 run();
