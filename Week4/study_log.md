@@ -20,6 +20,7 @@
     - [innerText, innerHTMl, textContent 차이](https://developer.mozilla.org/ko/docs/Web/API/Node/textContent)
     
     - [수정기능에 사용한 contenteditable MDN](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Editable_content)
+
 ### Mission - dropBox
 1. insertAdjacentHTML 이용하여 ul tag 의 자식요소 중 끝 순서로 추가하는 방식 사용
 2. classList.replace 를 통해 Hidden class 와 unhidden class 를 변경
@@ -28,5 +29,6 @@
 
 4. js 구현 상 문제가 없는데 실행이 안되어 보다보니 html script tag 가 실행되고 html 이 파싱되어 js 가 기능을 못한 것 같다. defer 를 붙이니 실행됨.
    (Week3 study log 의 defer 참고사이트 보기)
-   
+5. 마우스가 list 를 스쳐지나갔을 때에는 하위 목록 unhidden 이 실행되면 안됨. 허나 setTimeout 은 실행된 순서가 아닌 timeout 이 빠른 순서대로 실행이 됐다. 하여 setTimeout 실행 전 마우스 위치를 확인하는 mouseenter 변수를 만들어 변수가 setTimeout callback 실행 시 변수가 true 일 경우만 실행되도록 구성하였다.
+6. 마우스무브 카운트의 경우, 500ms 마다 카운트를 해야되므로 setInterval 을 사용하여 해당 시간마다 mousemove 변수를 true 로 만들어주고 move event 발생 시마다 true 일 경우 카운트, 마지막에 false로 다시 바꿔주도록 함. 
    
