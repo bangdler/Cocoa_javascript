@@ -29,6 +29,15 @@
 
 4. js 구현 상 문제가 없는데 실행이 안되어 보다보니 html script tag 가 실행되고 html 이 파싱되어 js 가 기능을 못한 것 같다. defer 를 붙이니 실행됨.
    (Week3 study log 의 defer 참고사이트 보기)
-5. 마우스가 list 를 스쳐지나갔을 때에는 하위 목록 unhidden 이 실행되면 안됨. 허나 setTimeout 은 실행된 순서가 아닌 timeout 이 빠른 순서대로 실행이 됐다. 하여 setTimeout 실행 전 마우스 위치를 확인하는 mouseenter 변수를 만들어 변수가 setTimeout callback 실행 시 변수가 true 일 경우만 실행되도록 구성하였다.
+5. 마우스가 list 를 스쳐지나갔을 때에는 하위 목록 unhidden 이 실행되면 안됨. 허나 setTimeout 은 실행된 순서가 아닌 timeout 이 빠른 순서대로 실행이 됐다. 하여 setTimeout 실행 전 마우스 위치를 확인하는 mouseenter 변수를 만들어 setTimeout callback 실행 시 변수가 true 일 경우만 실행되도록 구성하였다.
+    이 때, mouseleave 발생 시 mouseenter = false 로 변경해주어 2초 이상 mouseenter 상태여야 하위 목록이 보임.
 6. 마우스무브 카운트의 경우, 500ms 마다 카운트를 해야되므로 setInterval 을 사용하여 해당 시간마다 mousemove 변수를 true 로 만들어주고 move event 발생 시마다 true 일 경우 카운트, 마지막에 false로 다시 바꿔주도록 함. 
-   
+7. 기능 상 문제는 없지만 아쉬운 점
+    - dj list 를 list 의 형제 요소로 추가했고 그러다보니 forEach 를 통해 추가되는 각 list마다 이벤트함수를 걸어줬다. 하여 내부에 mouseenter 등과 같은 변수들이 중복 선언되는 듯한 느낌이 들고 뭔가 깔끔하지 않다.
+    - 추가될 list만 따로 div 를 나누어 구성했으면 좋았을 것 같다. 
+8. throttle 과 debouncing 
+    - 궁금해서 찾아봤는데 내가 사용한 방식과 똑같지는 않지만 이벤트를 계속 발생시키지 않는다는 목적으로 유사한 부분이 있는 것 같다. 
+    - mousemove를 위해 내가 적용한 방식과 throttling 이 유사한 방식 같다.
+    - forEach 를 사용했기 때문에 throttling 과 debouncing 을 완전 적용하기는 어려운 것 같다. 
+    - 참고 사이트
+        [throttle, debounce 사용예](https://pewww.tistory.com/9)
