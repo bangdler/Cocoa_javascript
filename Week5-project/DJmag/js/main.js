@@ -67,27 +67,39 @@ class dataManager {
         return;
     }
 
-    // 연도별 배열에서 dj 이름에 해당하는 순위 (index) 를 반환. 없으면 0.
-    getRankTrend(djName) {
-        let rankObject = new Object();
-        if(this.checkInclude(djName))
-        for (let key in this.djData) {
-            let rank = this.djData[key].indexOf(djName);
-            if(rank === -1) {rank = 0}
-            rankObject[key] = rank;
+    // djRankData 의 key 배열(=dj명) 과 입력된 djName 을 match 하여 matching key 배열을 반환.
+        // key 배열 공백 제거, djName 은 공백 제거, 대소문자 구분 없이 비교.
+        // 출력은 검색된 모든 key 값을 화면에 띄운다.
+    getMatchedDj(djName) {
+        const djKey = Object.keys(this.djRankData)
+        const djKeyNoSpace = djKey.map((dj) => dj.replace(/ /gi, ""))
+        const djNameReg = changeNameRegExp(djName)
+        let matchedDjKey = checkKeyWithName(djKeyNoSpace, djNameReg, djKey);
+        if(!matchedDjKey) {
+            alert('없는 dj 입니다.')
+            console.log('없는 dj 입니다.')
+            return;
         }
-        return rankObject
+        return matchedDjKey;
     }
 
-    checkInclude(djName) {
-        for (let key in this.djData) {
-            if(this.djData[key].includes(djName)) return true;
-        }
-        alert('없는 dj 입니다.')
-        return false;
+    changeNameRegExp(djName) {
+        let nameReg = djName.replace(/ /gi, "")
+        nameReg = RegExp(nameReg, 'gi')
+        return nameReg;
     }
 
-    // 대소문자 구분 없이...비교해서 해당 dj name 의 순위 반환하기.
+    checkKeyWithName(keyArray, name, originKey){
+        let checkResults = [];
+        keyArray.forEach(function(dj, index) {
+            const matchResult = dj.match(name)
+            if(matchResult) {
+                checkResults.push(originKey[index])
+            }
+        })
+        return checkResults;
+    }
+
 
 
 }
@@ -98,11 +110,15 @@ class ViewManager {
         this.$djNameSearch = document.querySelector('#djNameSearch');
     }
 
-    renderSearchedDJ(djName, djRank) {
-        const $djName = document.querySelector('#djName');
-        const $djRank = document.querySelector('#djRankTrend');
-        $djName.innerText = djName;
-        $djRank.innerText = djRank;
+    //검색된 dj 이름들이 링크로 보여진다.
+    renderSearchedDJ(djNameArray) {
+        const $searchedDj = document.querySelector('#searchedDj')
+        djNameArray.forEach(function (dj) {
+            $searchedDj.appendChild(`<span role="button" tabindex="0" id="${dj}button">${dj}</span>`)
+        })
+    }
+
+    renderClickedDj(djName, djRank) {
 
     }
 }
@@ -125,9 +141,11 @@ class controller {
     searchHandler(e) {
         e.preventDefault();
         const searchedName = this.view.$djNameSearch.value;
-        const rankTrend = this.data.getRankTrend(searchedName)
         if(this.isEmpty(searchedName)) return;
-        this.view.renderSearchedDJ(searchedName,rankTrend)
+        this.view.renderSearchedDJ(searchedName)
+        //
+        const rankTrend = this.data.djRankData[searchedName]
+
     }
 
     isEmpty(djName) {

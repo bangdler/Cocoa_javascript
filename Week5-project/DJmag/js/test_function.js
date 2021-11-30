@@ -10,11 +10,9 @@ const example = [  {
     { id: '98', Year: '2011', Rank: '7', DJ: 'bangtae', Change: 'Up 33' },
     { id: '98', Year: '2009', Rank: '7', DJ: 'ozumi', Change: 'Up 33' },
     { id: '98', Year: '2011', Rank: '10', DJ: 'Avicii', Change: 'Up 33' },
-    { id: '98', Year: '2016', Rank: '12', DJ: 'Avicii', Change: 'Up 33' }
+    { id: '98', Year: '2016', Rank: '12', DJ: 'Avicii', Change: 'Up 33' },
+    { id: '98', Year: '2016', Rank: '15', DJ: 'ferry corst', Change: 'Up 33' }
 ]
-
-console.log(getRequiredData(example)[0])
-console.log(getRequiredData(example)[1])
 
 
 // parsing 하여 객체 배열로 된 data를 받아 연간 top 100 객체, dj 당 순위 객체로 변환.
@@ -52,3 +50,40 @@ function makeDjRank(object, year, dj, rank) {
     object[dj][yearIndex] = Number(rank)
     return;
 }
+
+//console.log(getRequiredData(example)[0])
+//console.log(getRequiredData(example)[1])
+
+
+// dj 명의 key 배열을 구하고 공백을 제거하여 매개변수 dj 명의 정규식 값과 비교하여 동일 값의 index를 반환.
+function getMatchedDj(djName) {
+    const djKey = Object.keys(getRequiredData(example)[1])
+    const djKeyNoSpace = djKey.map((dj) => dj.replace(/ /gi, ""))
+    const djNameReg = changeNameRegExp(djName)
+    let matchedDjKey = checkKeyWithName(djKeyNoSpace, djNameReg, djKey);
+    if(!matchedDjKey) {
+        alert('없는 dj 입니다.')
+        console.log('없는 dj 입니다.')
+        return;
+    }
+    return matchedDjKey;
+}
+
+function changeNameRegExp(djName) {
+    let nameReg = djName.replace(/ /gi, "")
+    nameReg = RegExp(nameReg, 'gi')
+    return nameReg;
+}
+
+function checkKeyWithName(keyArray, name, originKey){
+    let checkResults = [];
+    keyArray.forEach(function(dj, index) {
+        const matchResult = dj.match(name)
+        if(matchResult) {
+            checkResults.push(originKey[index])
+        }
+    })
+    return checkResults;
+}
+
+console.log(getMatchedDj('dfdft'))
