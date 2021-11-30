@@ -21,8 +21,14 @@
       (코드가 js도 아니고 crawling 해본 적이 없어 csv 파일은 도움을 받았다.)
     - 연도, 순위, 이름 으로 구성된 csv 파일
     - 이름, 이미지링크 로 구성된 csv 파일
+    - [scraping code](https://github.com/koki25ando/DJ-Mag-History-Data/blob/master/DJ_Mag.R)    
+    
     
 2. CSV Parsing
     - npm csv-parser 를 설치하여 parsing 하기.
-    - 
     
+        [npm csv-parser](https://www.npmjs.com/package/csv-parser)
+    - 모듈 사용이 익숙하지 않아 csv-parse 모듈을 사용하려다가 csv-parser 로 변경 (JSON 형태로 만들어준다.)
+    - id(행번호), year, dj명, 순위, 작년대비 로 구성된 객체로 parsing
+    - 최종적으로 연도별 dj 순위 객체로 가공하였다.
+        
