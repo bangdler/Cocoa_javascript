@@ -1,6 +1,7 @@
 {
   "name": "cocoa_javascript",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -18,7 +19,6 @@
   "homepage": "https://github.com/bangdler/Cocoa_javascript#readme",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
-    "csv-parse": "^5.0.3",
     "csv-parser": "^3.0.0"
   }
 }

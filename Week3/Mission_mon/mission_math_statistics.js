@@ -1,5 +1,5 @@
 
-// package.json 에서 type=module 추가해야 import 가능.
+// package.json 에서 type=module 추가해야 import 가능
 import {zIndex} from './Z_index.js'
 
 // 학생들의 수학 점수 분석한다.
