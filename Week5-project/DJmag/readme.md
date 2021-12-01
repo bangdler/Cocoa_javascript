@@ -23,19 +23,21 @@
     - 이름, 이미지링크 로 구성된 csv 파일
     - [scraping code](https://github.com/koki25ando/DJ-Mag-History-Data/blob/master/DJ_Mag.R)    
     
-    
 2. CSV Parsing
     - npm csv-parser 를 설치하여 parsing 하기.
     
         [npm csv-parser](https://www.npmjs.com/package/csv-parser)
-    - 모듈 사용이 익숙하지 않아 csv-parse 모듈을 사용하려다가 csv-parser 로 변경 (JSON 형태로 만들어준다.)
+    - 모듈 사용이 익숙하지 않아 csv-parse 모듈을 사용하려다가 csv-parser 로 변경
     - id(행번호), year, dj명, 순위, 작년대비 로 구성된 객체로 parsing
     - 최종적으로 연도별 dj 순위 객체로 가공하였다.
     - 이상하게 어제는 parsing 이 됐는데, 오늘은 require 관련 에러가 발생한다. document 도 인식을 못하는 현상 발생중...
     
         Uncaught ReferenceError: require is not defined
         
-
+    - document 는 terminal 에서 js 파일 실행 시에 인식을 못하는게 당연한 거였고, fs & csv-parser 모듈 사용 시 브라우저에서 인식을 못하여 방법을 찾다가 결국 포기.
+    - fs 모듈은 아직도 잘 모르겠지만, end 이벤트가 발생하면 빈 배열에 push 한 data 가 남아있지 않고 사라진다. 
+    - 최종적으로 data.js 를 만들어 모듈 import 후, fs.writeFile 을 이용하여 json 형태로 가공한 dj_mag.js 를 별도로 만들어 export 하여 사용함.
+        
 3. HTML CSS
     - css 는 최소화하고 싶지만 dj list 등 보여주는 용도의 웹이므로 부트스트랩이라는 css 라이브러리? 오픈소스 프레임워크를 이용하기로 했다.
     - 필요한 기능과 디자인의 css, js 가 구현되어 있어 편리하다.
@@ -60,7 +62,7 @@
             
             [정규표현식 패턴과 플래그](https://ko.javascript.info/regexp-introduction)
             
-        5. data 가공 시 forEach 문에서 this 사용 시 참조가 안되는 문제 발생. 아래와 같이 해결하였다.
+        6. data 가공 시 forEach 문에서 this 사용 시 참조가 안되는 문제 발생. 아래와 같이 해결하였다.
             ```javascript
             // foreach 문에서 this 사용 시에는 인자로 참조할 this 를 지정해주어야함.
             getRequiredData(data) {
@@ -76,7 +78,18 @@
                 return [top100ofYear, djRankTrend];
             }
             ```   
-    - 검색된 배열에 버튼 이벤트 추가
-        1. 배열 값마다 eventListener 를 추가하지 않고 상위 tag 에 추가하여 이벤트 위임을 시도해보았다.
+    - 검색된 배열 값에 select 이벤트 추가
+        1. 배열 값마다 eventListener 를 추가하지 않고 상위 tag 에 추가하여 이벤트 위임을 시도해보았다. 이로써 각 하위 tag마다 이벤트를 걸지 않아도 됨.
             
             [이벤트 위임](https://ko.javascript.info/event-delegation)
+            
+    - 그래프 보여주기
+        1. Chart js 사용. 
+        
+            [chart js site](https://www.chartjs.org/docs/latest/getting-started/)
+            
+        2. 애를 먹은 부분은 그래프가 안나와서 고생을 했는데, 이유는 canvas tag 의 상위 tag에 ```textContent = 입력값``` 으로 덮어쓰기가 되고 있어서였다.
+        3. 새로운 dj 를 선택할 때 그래프가 변경되지 않아서 ```this.chart = null; ``` 을 설정하고 ```if(this.chart) this.chart.destroy();``` 로 초기화 실시.
+        4. 추가를 고려하는 기능 : 여러명 선택 시 그래프를 겹쳐서 보여주기. 색 구분 필요.
+        
+    - dropDown 모든 연도 추가, 연도 선택 시 dj list 보여주기
