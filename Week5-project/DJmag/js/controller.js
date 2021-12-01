@@ -7,6 +7,7 @@ export class Controller {
 
     init() {
         this.searchEventListener();
+        this.setDropdown();
     }
 
     searchEventListener() {
@@ -15,6 +16,7 @@ export class Controller {
     }
 
     searchHandler(e) {
+        //form tag 내에 이벤트 발생 시 preventDefault ;
         e.preventDefault();
         const searchedName = this.view.$djNameSearch.value;
         const $searchedDj = document.querySelector('#searchedDj')
@@ -22,7 +24,7 @@ export class Controller {
         if(this.isEmpty(searchedName)) return;
         const searchedArray = this.data.getMatchedDj(searchedName)
         if(searchedArray) {
-            this.view.renderSearchedDj(searchedArray, $searchedDj)
+            this.view.renderSearchedDj(searchedArray)
             this.selectEventListener($searchedDj);
         }
     }
@@ -47,13 +49,33 @@ export class Controller {
 
     isEmpty(djName) {
         if(djName === "") {
-            alert('dj 이름을 입력해주세요')
+            alert('dj 이름을 입력해주세요');
             return true;
         }
     }
 
     setDropdown() {
-        const yearArray = this.data.yearList
-        this.view.addDropdownList(yearArray)
+        const yearArray = this.data.yearList;
+        this.view.addDropdownList(yearArray);
+        this.dropdownButtonListener();
     }
+
+    dropdownButtonListener() {
+        const $dropdownMenu = document.querySelector('.dropdown-menu')
+        $dropdownMenu.addEventListener('click', (e) => this.dropdownButtonHandler(e));
+    }
+
+    dropdownButtonHandler(e) {
+        const target = e.target;  // dropdown menu tag 이벤트 위임.
+        const $searchedDj = document.querySelector('#searchedDj')
+        this.view.clearSearchedDj($searchedDj);
+
+        if(target.className !== 'dropdown-item') return;
+        const yearKey = target.id;
+        const yearTop100 = this.data.top100Data[yearKey]
+        this.view.renderYearTop100(yearTop100)
+        this.selectEventListener($searchedDj)
+    }
+
+
 }

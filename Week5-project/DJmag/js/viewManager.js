@@ -6,7 +6,8 @@ export class ViewManager {
     }
 
     //검색된 dj 이름들이 링크로 보여진다.
-    renderSearchedDj(djNameArray, $searchedDj) {
+    renderSearchedDj(djNameArray) {
+        const $searchedDj = document.querySelector('#searchedDj')
         djNameArray.forEach(function (dj) {
             $searchedDj.innerHTML += `<li><span role="button" tabindex="0" class="djSelect" id="${dj}">${dj}</span></li>`
         })
@@ -14,6 +15,13 @@ export class ViewManager {
 
     clearSearchedDj($searchedDj) {
         $searchedDj.innerHTML = null;
+    }
+
+    renderYearTop100(yearTop100) {
+        const $searchedDj = document.querySelector('#searchedDj')
+        yearTop100.forEach(function (dj, index) {
+            $searchedDj.innerHTML += `<li><span role="button" tabindex="0" class="djSelect" id="${dj}">${index + 1}위 ${dj}</span></li>`
+        })
     }
 
     renderDjName(selectedKey) {
@@ -62,9 +70,10 @@ export class ViewManager {
     }
 
     addDropdownList(yearArray) {
-        const $dropdownMenu = document.querySelector('#dropdown-menu')
-        yearArray.forEach(function(year){
-            $dropdownMenu.innerHTML += `<li><a class="dropdown-item" href="#">${year}</a></li>`
+        const $dropdownMenu = document.querySelector('.dropdown-menu')
+        const reverseYear = yearArray.reverse();
+        reverseYear.forEach(function(year){
+            $dropdownMenu.innerHTML += `<li><a class="dropdown-item" id="${year}" href="#">${year}</a></li>`
         })
     }
 }
