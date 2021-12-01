@@ -19,6 +19,7 @@
   "homepage": "https://github.com/bangdler/Cocoa_javascript#readme",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
+    "chart.js": "^3.6.1",
     "csv-parser": "^3.0.0"
   }
 }

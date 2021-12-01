@@ -68,7 +68,7 @@ class dataManager {
         if (!object[dj]) {
             object[dj] = [];
             for (let i = 0; i < 17; i++){
-                object[dj].push(0);
+                object[dj].push(200);
             }
         }
         object[dj][yearIndex] = Number(rank)
@@ -89,7 +89,6 @@ class dataManager {
             console.log('없는 dj 입니다.')
             return false;
         }
-        console.log(matchedDjKey)
         return matchedDjKey;
     }
 
@@ -118,6 +117,7 @@ class dataManager {
 class ViewManager {
     constructor() {
         this.$djNameSearch = document.querySelector('#djNameSearch');
+        this.chart = null;
     }
 
     //검색된 dj 이름들이 링크로 보여진다.
@@ -136,22 +136,37 @@ class ViewManager {
         $djName.textContent = selectedKey;
     }
 
-    renderDjRankTrend(selectedRankArray) {
-        const $djRankTrend = document.querySelector('#djRankTrend')
-        $djRankTrend.textContent = selectedRankArray
-        console.log(selectedRankArray)
+    renderDjRankTrend(yearList, selectedRankArray) {
+        //clear
+        const $djRankChart = document.querySelector('#rankingChart')
+        if(this.chart)
+            this.chart.destroy()
+
         const config = {
             type: 'line',
-            data: selectedRankArray,
-            options: {}
+            data: {
+                labels: yearList,
+                datasets: [{
+                    label: 'Rank Trend',
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: selectedRankArray,
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        reverse: true,
+                        min: 1,
+                        max: 100
+                    }
+                }
+            }
         };
-
-        const myChart = new Chart(
-            document.getElementById('rankingChart'),
-            config
-        );
+        let myChart = document.getElementById('rankingChart')
+        console.log(myChart)
+        this.chart = new Chart(myChart, config);
     }
-
 }
 
 class controller {
@@ -188,14 +203,16 @@ class controller {
 
     selectHandler(e) {
         const target = e.target;
+        // 이벤트 위임
         if (target.className !=='djSelect') return;
         const selectedKey = target.id;
+        const yearArray = this.data.yearList;
         const selectedRankArray = this.data.djRankData[selectedKey]
 
         // view에 만들어야할 함수.
         //this.view.renderDjImg(selectedKey)
         this.view.renderDjName(selectedKey)
-        this.view.renderDjRankTrend(selectedRankArray)
+        this.view.renderDjRankTrend(yearArray, selectedRankArray)
     }
 
     isEmpty(djName) {
