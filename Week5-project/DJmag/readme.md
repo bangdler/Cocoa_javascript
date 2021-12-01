@@ -31,4 +31,52 @@
     - 모듈 사용이 익숙하지 않아 csv-parse 모듈을 사용하려다가 csv-parser 로 변경 (JSON 형태로 만들어준다.)
     - id(행번호), year, dj명, 순위, 작년대비 로 구성된 객체로 parsing
     - 최종적으로 연도별 dj 순위 객체로 가공하였다.
+    - 이상하게 어제는 parsing 이 됐는데, 오늘은 require 관련 에러가 발생한다. document 도 인식을 못하는 현상 발생중...
+    
+        Uncaught ReferenceError: require is not defined
         
+
+3. HTML CSS
+    - css 는 최소화하고 싶지만 dj list 등 보여주는 용도의 웹이므로 부트스트랩이라는 css 라이브러리? 오픈소스 프레임워크를 이용하기로 했다.
+    - 필요한 기능과 디자인의 css, js 가 구현되어 있어 편리하다.
+          
+        [부트스트랩 홈페이지](https://getbootstrap.com/docs/5.1/getting-started/introduction/)
+        
+4. 기능 구현
+    - 수업 과제를 통해 배운 것처럼 MVC 패턴을 적용해보려고 한다.
+    - MVC 역할
+        1. Controller : 브라우저에서 요청 받은 input, click 등의 이벤트를 View 에 전달하여 render, Data에 전달하여 Data set 에서 해당되는 값을 찾아 반환할 수 있도록 함.
+        2. View : 검색한 글자가 포함된 dj 명 List 보여주기, 선택 시 이름, 사진, rank Trend 보여주기. drop down 선택 시 연도별 순위 보여주기.
+        3. Data : dj mag 의 parsing 된 data를 가공하여 필요한 data 객체로 관리. 요청 시 해당 dj name key 값에 해당되는 rank trend 반환. 
+       
+    - 검색
+        1. 검색은 객체 (key:dj name, value:rank trend)에서 요청한 값에 해당되는 key 값을 찾아 value를 반환하고자 함.
+        2. 이 때 대소문자와 띄어쓰기에 상관없이 찾도록 구현하고 싶어, 정규표현식을 활용하여 객체를 한번 더 가공하였다. 
+        3. 띄어쓰기를 제거한 데이터와, 검색 요청한 값 띄어쓰기 제거 및 대소문자 구분 없는 정규표현식으로 만들어 match method 활용하여 비교하였다.
+        4. 처음에는 include를 사용하여 배열에 존재 여부를 보려고 하였으나, 대소문자 구분이 안되더라.
+        5. 현재는 문자열의 순서만 같다면 띄어쓰기, 대소문자 상관없이 true 이므로 해당되는 모든 값을 배열로 반환하도록 구성하였다.
+        
+            [match method](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/String/match)
+            
+            [정규표현식 패턴과 플래그](https://ko.javascript.info/regexp-introduction)
+            
+        5. data 가공 시 forEach 문에서 this 사용 시 참조가 안되는 문제 발생. 아래와 같이 해결하였다.
+            ```javascript
+            // foreach 문에서 this 사용 시에는 인자로 참조할 this 를 지정해주어야함.
+            getRequiredData(data) {
+                const top100ofYear = new Object();
+                const djRankTrend = new Object();
+                data.forEach(function (item) {
+                    const year = item['Year']
+                    const dj = item['DJ']
+                    const rank = item['Rank']
+                    this.makeTop100(top100ofYear, year, dj)
+                    this.makeDjRank(djRankTrend, year, dj, rank)
+                }, this)
+                return [top100ofYear, djRankTrend];
+            }
+            ```   
+    - 검색된 배열에 버튼 이벤트 추가
+        1. 배열 값마다 eventListener 를 추가하지 않고 상위 tag 에 추가하여 이벤트 위임을 시도해보았다.
+            
+            [이벤트 위임](https://ko.javascript.info/event-delegation)

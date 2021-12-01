@@ -1,4 +1,12 @@
-
+//import csvParser from "./../../../node_modules/csv-parser";
+//import fs from 'fs';
+//const parse = require('csv-parser');
+//const fs = require('fs');
+// const jsdom = require("jsdom");
+// const { JSDOM } = jsdom;
+// global.document = new JSDOM('').window.document;
+import {dj_data} from "./../dataset/dj_mag.js"
+let dj_magArr = dj_data;
 
 //dj_magArr 예시
 const example = [  {
@@ -16,14 +24,14 @@ const example = [  {
 ]
 
 
-
 // data 가공
 
 class dataManager {
     constructor(data) {
-        this.orginData = data;
-        this.top100Data = this.getRequiredData(this.orginData)[0];
-        this.djRankData = this.getRequiredData(this.orginData)[1];
+        this.top100Data = this.getRequiredData(data)[0];
+        this.djRankData = this.getRequiredData(data)[1];
+        this.djNameList = Object.keys(this.djRankData);
+        this.yearList = Object.keys(this.top100Data);
     }
 
     // parsing 하여 객체 배열로 된 data를 받아 연간 top 100 객체, dj 당 순위 객체로 변환.
@@ -31,6 +39,7 @@ class dataManager {
     getRequiredData(data) {
         const top100ofYear = new Object();
         const djRankTrend = new Object();
+
         data.forEach(function (item) {
             const year = item['Year']
             const dj = item['DJ']
@@ -40,7 +49,6 @@ class dataManager {
         }, this)
         return [top100ofYear, djRankTrend];
     }
-
 
     /* data에서 year 를 key 로 같은 년도의 dj 들을 순서대로 배열에 넣어 top 100을 value로 하는 객체 생성.
         (data 는 객체 순서가 순위 순서인 배열로 구성되어 있음.)
@@ -67,19 +75,21 @@ class dataManager {
         return;
     }
 
+
     // djRankData 의 key 배열(=dj명) 과 입력된 djName 을 match 하여 matching key 배열을 반환.
         // key 배열 공백 제거, djName 은 공백 제거, 대소문자 구분 없이 비교.
         // 출력은 검색된 모든 key 값을 화면에 띄운다.
     getMatchedDj(djName) {
-        const djKey = Object.keys(this.djRankData)
+        const djKey = this.djNameList
         const djKeyNoSpace = djKey.map((dj) => dj.replace(/ /gi, ""))
-        const djNameReg = changeNameRegExp(djName)
-        let matchedDjKey = checkKeyWithName(djKeyNoSpace, djNameReg, djKey);
-        if(!matchedDjKey) {
+        const djNameReg = this.changeNameRegExp(djName)
+        let matchedDjKey = this.checkKeyWithName(djKeyNoSpace, djNameReg, djKey);
+        if(matchedDjKey.length === 0) {
             alert('없는 dj 입니다.')
             console.log('없는 dj 입니다.')
-            return;
+            return false;
         }
+        console.log(matchedDjKey)
         return matchedDjKey;
     }
 
@@ -111,16 +121,37 @@ class ViewManager {
     }
 
     //검색된 dj 이름들이 링크로 보여진다.
-    renderSearchedDJ(djNameArray) {
-        const $searchedDj = document.querySelector('#searchedDj')
+    renderSearchedDj(djNameArray, $searchedDj) {
         djNameArray.forEach(function (dj) {
-            $searchedDj.appendChild(`<span role="button" tabindex="0" id="${dj}button">${dj}</span>`)
+            $searchedDj.innerHTML += `<li><span role="button" tabindex="0" class="djSelect" id="${dj}">${dj}</span></li>`
         })
     }
 
-    renderClickedDj(djName, djRank) {
-
+    clearSearchedDj($searchedDj) {
+        $searchedDj.innerHTML = null;
     }
+
+    renderDjName(selectedKey) {
+        const $djName = document.querySelector('#djName')
+        $djName.textContent = selectedKey;
+    }
+
+    renderDjRankTrend(selectedRankArray) {
+        const $djRankTrend = document.querySelector('#djRankTrend')
+        $djRankTrend.textContent = selectedRankArray
+        console.log(selectedRankArray)
+        const config = {
+            type: 'line',
+            data: selectedRankArray,
+            options: {}
+        };
+
+        const myChart = new Chart(
+            document.getElementById('rankingChart'),
+            config
+        );
+    }
+
 }
 
 class controller {
@@ -130,10 +161,10 @@ class controller {
     }
 
     init() {
-        this.eventsListener();
+        this.searchEventListener();
     }
 
-    eventsListener() {
+    searchEventListener() {
         const $searchBtn = document.querySelector('#searchBtn');
         $searchBtn.addEventListener('click', (e) => this.searchHandler(e));
     }
@@ -141,11 +172,30 @@ class controller {
     searchHandler(e) {
         e.preventDefault();
         const searchedName = this.view.$djNameSearch.value;
+        const $searchedDj = document.querySelector('#searchedDj')
+        this.view.clearSearchedDj($searchedDj);
         if(this.isEmpty(searchedName)) return;
-        this.view.renderSearchedDJ(searchedName)
-        //
-        const rankTrend = this.data.djRankData[searchedName]
+        const searchedArray = this.data.getMatchedDj(searchedName)
+        if(searchedArray) {
+            this.view.renderSearchedDj(searchedArray, $searchedDj)
+            this.selectEventListener($searchedDj);
+        }
+    }
 
+    selectEventListener(searchedDj){
+        searchedDj.addEventListener('click', (e) => this.selectHandler(e))
+    }
+
+    selectHandler(e) {
+        const target = e.target;
+        if (target.className !=='djSelect') return;
+        const selectedKey = target.id;
+        const selectedRankArray = this.data.djRankData[selectedKey]
+
+        // view에 만들어야할 함수.
+        //this.view.renderDjImg(selectedKey)
+        this.view.renderDjName(selectedKey)
+        this.view.renderDjRankTrend(selectedRankArray)
     }
 
     isEmpty(djName) {
@@ -157,8 +207,16 @@ class controller {
 
 }
 
-const djData = new dataManager(example);
+
+const djData = new dataManager(dj_magArr);
 const djView = new ViewManager();
 const djControl = new controller(djData, djView);
+djControl.init()
 
-console.log(djData.top100Data)
+//const djDataSet = initialParser()
+//console.log(dj_magArr)
+//const djData = new dataManager();
+//const djView = new ViewManager();
+//const djControl = new controller(djData, djView);
+
+//console.log(djData.top100Data)

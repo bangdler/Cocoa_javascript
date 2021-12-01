@@ -57,14 +57,8 @@ id,Year,Rank,DJ,Change
 56,2005,4,Sasha,Non Mover
 57,2006,4,Christopher Lawrence,Up 10
 58,2007,4,Paul van Dyk,Down 3
-59,2008,4,"4
-
-
-Above & Beyond",Up 2
-60,2009,4,"4
-
-
-Above & Beyond",Non Mover
+59,2008,4,Above & Beyond,Up 2
+60,2009,4,Above & Beyond,Non Mover
 61,2010,4,Deadmau5,Up 2
 62,2011,4,Deadmau5,Non Mover
 63,2012,4,David Guetta,Down 3
@@ -72,7 +66,7 @@ Above & Beyond",Non Mover
 65,2014,4,Martin Garrix,Up 36
 66,2015,4,Armin Van Buuren,Down 1
 67,2016,4,Armin Van Buuren,Non Mover
-68,2017,4, Hardwell,Down 1
+68,2017,4,Hardwell,Down 1
 69,2018,4,Armin Van Buuren,Down 1
 70,2019,4,Armin Van Buuren,Non Mover
 71,2020,4,Armin Van Buuren,Non Mover
@@ -92,10 +86,7 @@ Above & Beyond",Non Mover
 85,2016,5,Tiesto,Non Mover
 86,2017,5,Tiesto,Non Mover
 87,2018,5,David Guetta,Up 2
-88,2019,5,"5
-
-
-Marshmello",Up 5
+88,2019,5,Marshmello,Up 5
 89,2020,5,Alok,Up 6
 90,2021,5, Dimitri Vegas & Like Mike,Down 3
 91,2004,6,Hernan Cattaneo,Up 16
@@ -112,13 +103,7 @@ Marshmello",Up 5
 102,2015,6,David Guetta,Up 1
 103,2016,6,David Guetta,Non Mover
 104,2017,6,The Chainsmokers,Up 12
-105,2018,6,"
-
-
-
-DSC_0114 2.JPG
-
- Tiesto",Down 1
+105,2018,6,Tiesto,Down 1
 106,2019,6,Don Diablo ,Up 1
 107,2020,6,Don Diablo ,Non Mover
 108,2021,6,Afrojack,Up 1
@@ -138,9 +123,7 @@ DSC_0114 2.JPG
 122,2017,7,David Guetta,Down 1
 123,2018,7,Don Diablo ,Up 4
 124,2019,7,Oliver Heldens,Up 2
-125,2020,7,"Afrojack-top100djs-2020
-
- Afrojack",Up 2
+125,2020,7,Afrojack,Up 2
 126,2021,7,Don Diablo ,Down 1
 127,2004,8,John Digweed,Down 3
 128,2005,8,Deep Dish, Up 2
@@ -702,10 +685,7 @@ DSC_0114 2.JPG
 684,2021,38,Peggy Gou,Up 31
 685,2004,39,Above & Beyond,Re-entry
 686,2005,41,Kai Tracid,Up 28
-687,2006,39,D-Formation,"New Entry
-
-
-  40"
+687,2006,39,D-Formation,"New Entry 40"
 688,2007,40,DJ Vibe,Up 7
 689,2008,39,Benny Benassi,Down 7
 690,2009,39,Umek,Down 6
@@ -794,10 +774,7 @@ DSC_0114 2.JPG
 773,2020,43,Illenium,Up 21
 774,2021,43,Ummet Ozcan,Up 22
 775,2004,45,Laurent Garnier,Down 16
-776,2005,46,Andy Moor,"New Entry
-
-
-  47"
+776,2005,46,Andy Moor,"New Entry 47"
 777,2006,45,The Thrillseekers,Re-entry
 778,2007,45,Nic Fanciulli,Re-entry
 779,2008,44,Marco V,Down 24
@@ -1388,8 +1365,7 @@ DSC_0114 2.JPG
 1364,2017,76,Robin Schulz,Down 7
 1365,2018,76,Da Tweekaz,Down 9
 1366,2019,76,Cedric Gervais,Up 11
-1367,2020,76,"
-Down 13",NA
+1367,2020,76,NA,"Down 13"
 1368,2021,76,Mr. Pig,Up 3
 1369,2004,NA,NA,NA
 1370,2005,78,Lady Dana,Down 49
@@ -1504,9 +1480,7 @@ Down 13",NA
 1479,2006,82,Umek,Down 3
 1480,2007,86,Armand Van Helden,Re-entry
 1481,2008,83,Marcel Woods, New Entry 42
-1482,2009,83,"Pete Tong
-
-Down 5",NA
+1482,2009,83,Pete Tong,NA
 1483,2010,83,Skazi,Down 2
 1484,2011,83,Tritonal,New Entry
 1485,2012,83,Nero,Up 5
