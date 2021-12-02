@@ -17,8 +17,9 @@ export class ViewManager {
         $searchedDj.innerHTML = null;
     }
 
-    renderYearTop100(yearTop100) {
+    renderYearTop100(yearTop100, yearKey) {
         const $searchedDj = document.querySelector('#searchedDj')
+        $searchedDj.innerHTML = `<div class="col-4">${yearKey}년 TOP 100 LIST</div>`
         yearTop100.forEach(function (dj, index) {
             $searchedDj.innerHTML += `<li><span role="button" tabindex="0" class="djSelect" id="${dj}">${index + 1}위 ${dj}</span></li>`
         })
@@ -26,14 +27,12 @@ export class ViewManager {
 
     renderDjName(selectedKey) {
         const $djName = document.querySelector('#djName')
-        $djName.innerHTML = `<div class="col-3"><span class="badge bg-primary">${selectedKey}</span></div>`
+        $djName.innerText = `${selectedKey}`
     }
 
     renderDjRankTrend(yearList, selectedRankArray, djName) {
         if(this.chart)
             this.chart.destroy();
-        console.log(yearList)
-        console.log(yearList[0])
         const config = {
             type: 'line',
             data: {
@@ -81,7 +80,6 @@ export class ViewManager {
 
     addDropdownList(yearArray) {
         const $dropdownMenu = document.querySelector('.dropdown-menu')
-        console.log(yearArray[0])
         const reverseYear = yearArray.reverse();
         reverseYear.forEach(function(year){
             $dropdownMenu.innerHTML += `<li><a class="dropdown-item" id="${year}" href="#">${year}</a></li>`

@@ -16,3 +16,11 @@ body {
     overflow: auto;
     height: 500px;"
 }
+
+.hidden {
+    display: none;
+}
+
+.unhidden {
+
+}

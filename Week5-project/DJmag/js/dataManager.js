@@ -110,6 +110,7 @@ export class DataManager {
         return ImgArr[randomIndex]
     }
 
+    // 선택된 djName 에 맞는 imgData 객체의 dj key 를 찾아 해당 value 인 image link 를 반환한다.
     getMatchedImgKey(selectedKey) {
         const imgKey = Object.keys(this.djImgData)
         const imgKeyNoSpace = imgKey.map((dj) => dj.replace(/ /gi, ""))

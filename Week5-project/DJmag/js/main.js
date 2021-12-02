@@ -1,10 +1,4 @@
-//import csvParser from "./../../../node_modules/csv-parser";
-//import fs from 'fs';
-//const parse = require('csv-parser');
-//const fs = require('fs');
-// const jsdom = require("jsdom");
-// const { JSDOM } = jsdom;
-// global.document = new JSDOM('').window.document;
+
 import {dj_data} from "../dataset/dj_mag.js"
 import {dj_image} from "../dataset/dj_img.js";
 import {DataManager} from "./dataManager.js"
