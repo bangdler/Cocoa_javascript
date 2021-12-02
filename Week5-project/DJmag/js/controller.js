@@ -40,9 +40,11 @@ export class Controller {
         const selectedKey = target.id;
         const yearArray = this.data.yearList;
         const selectedRankArray = this.data.djRankData[selectedKey]
+        const selectedImg = this.selectImageHandler(selectedKey)
+        console.log(selectedImg)
 
         // view에 만들어야할 함수.
-        //this.view.renderDjImg(selectedKey)
+        this.view.renderDjImg(selectedImg)
         this.view.renderDjName(selectedKey)
         this.view.renderDjRankTrend(yearArray, selectedRankArray, selectedKey)
     }
@@ -77,5 +79,10 @@ export class Controller {
         this.selectEventListener($searchedDj)
     }
 
+    selectImageHandler(selectedKey) {
+        const selectedImgLink = this.data.getMatchedImgKey(selectedKey)
+        if(!selectedImgLink) return false;
+        return selectedImgLink;
+    }
 
 }

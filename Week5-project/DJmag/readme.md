@@ -93,3 +93,11 @@
         4. 추가를 고려하는 기능 : 여러명 선택 시 그래프를 겹쳐서 보여주기. 색 구분 필요.
         
     - dropDown 모든 연도 추가, 연도 선택 시 dj list 보여주기
+        1. dropDown 버튼 click 시에도 상위 tag 에 이벤트 위임
+        2. top 100 list 에 dj name click 시 기존의 select event handler 함수를 활용했다.
+        3. 활용을 위해 동일한 $searchDj 지역변수를 선언해줘야했는데 각 함수마다 같은 태그를 지칭하는 변수를 만드는게 괜찮은지...아니면 생성자에 하나를 만들어주는게 나은지 잘 모르겠다.
+    
+    - 이미지 보여주기
+        1. 이미지 parsing data 가공.
+        2. key : dj name, value : image 주소 객체 생성
+        3. select 함수 실행 시 이미지 render.  

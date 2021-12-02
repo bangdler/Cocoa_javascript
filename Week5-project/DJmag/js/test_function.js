@@ -86,4 +86,9 @@ function checkKeyWithName(keyArray, name, originKey){
     return checkResults;
 }
 
-console.log(getMatchedDj('dfdft'))
+//console.log(getMatchedDj('dfdft'))
+
+const ob = {1: 'ho'}
+
+console.log(ob[1])
+console.log(ob[2])

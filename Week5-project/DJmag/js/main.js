@@ -5,11 +5,14 @@
 // const jsdom = require("jsdom");
 // const { JSDOM } = jsdom;
 // global.document = new JSDOM('').window.document;
-import {dj_data} from "./../dataset/dj_mag.js"
+import {dj_data} from "../dataset/dj_mag.js"
+import {dj_image} from "../dataset/dj_img.js";
 import {DataManager} from "./dataManager.js"
 import {ViewManager} from "./viewManager.js"
 import {Controller} from "./controller.js"
+
 let dj_magArr = dj_data;
+let dj_imgArr = dj_image;
 
 //dj_magArr 예시
 const example = [  {
@@ -27,7 +30,7 @@ const example = [  {
 ]
 
 
-const djData = new DataManager(dj_magArr);
+const djData = new DataManager(dj_magArr, dj_imgArr);
 const djView = new ViewManager();
 const djControl = new Controller(djData, djView);
 djControl.init()

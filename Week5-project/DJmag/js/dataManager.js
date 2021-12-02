@@ -1,13 +1,14 @@
 
 export class DataManager {
-    constructor(data) {
+    constructor(data, img) {
         this.top100Data = this.getRequiredData(data)[0];
         this.djRankData = this.getRequiredData(data)[1];
         this.djNameList = Object.keys(this.djRankData);
         this.yearList = Object.keys(this.top100Data);
+        this.djImgData = this.getRequiredImgData(img);
     }
 
-    // parsing 하여 객체 배열로 된 data를 받아 연간 top 100 객체, dj 당 순위 객체로 변환.
+    // parsing 및 json 형태로 된 data를 받아 연간 top 100 객체, dj rank trend 객체로 변환.
     // foreach 문에서 this 사용 시에는 인자로 참조할 this 를 지정해주어야함.
     getRequiredData(data) {
         const top100ofYear = new Object();
@@ -49,17 +50,15 @@ export class DataManager {
         return;
     }
 
-    // djRankData 의 key 배열(=dj명) 과 입력된 djName 을 match 하여 matching key 배열을 반환.
-    // key 배열 공백 제거, djName 은 공백 제거, 대소문자 구분 없이 비교.
-    // 출력은 검색된 모든 key 값을 화면에 띄운다.
+    /* djRankData 의 key 배열(=dj명) 과 입력된 djName 을 match 하여 matching key 배열을 반환.
+       key 배열 공백 제거, djName 은 공백 제거, 대소문자 구분 없이 비교. 출력시 검색된 모든 key 값을 화면에 띄운다. */
     getMatchedDj(djName) {
         const djKey = this.djNameList
         const djKeyNoSpace = djKey.map((dj) => dj.replace(/ /gi, ""))
         const djNameReg = this.changeNameRegExp(djName)
-        let matchedDjKey = this.checkKeyWithName(djKeyNoSpace, djNameReg, djKey);
+        const matchedDjKey = this.checkKeyWithName(djKeyNoSpace, djNameReg, djKey);
         if(matchedDjKey.length === 0) {
             alert('없는 dj 입니다.')
-            console.log('없는 dj 입니다.')
             return false;
         }
         return matchedDjKey;
@@ -80,5 +79,48 @@ export class DataManager {
             }
         })
         return checkResults;
+    }
+
+    // parsing 및 json 형태로 된 img data를 받아 dj 당 img 객로 변환.
+    // foreach 문에서 this 사용 시에는 인자로 참조할 this 를 지정해주어야함.
+    getRequiredImgData(img) {
+        const djImage = new Object();
+        img.forEach(function (item) {
+            const dj = item['dj']
+            const imgLink = item['img']
+            this.makeDjImg(djImage, dj, imgLink)
+        }, this)
+        return djImage;
+    }
+
+    // data에서 dj 를 key 로 img 를 value 로 하는 객체 생성. 한 dj당 img 갯수는 다 다르다.
+    makeDjImg(object, dj, imgLink) {
+        if(!object[dj]) {
+            object[dj] = [];
+        }
+        object[dj].push(imgLink)
+        return;
+    }
+
+    // djName 에 맞는 여러 이미지 링크 중 랜덤으로 하나를 반환한다.
+    selectDjImg(djName) {
+        const ImgArr = this.djImgData[djName];
+        const max_num = ImgArr.length;
+        const randomIndex = Math.floor(Math.random() * max_num)
+        return ImgArr[randomIndex]
+    }
+
+    getMatchedImgKey(selectedKey) {
+        const imgKey = Object.keys(this.djImgData)
+        const imgKeyNoSpace = imgKey.map((dj) => dj.replace(/ /gi, ""))
+        const selectedKeyReg = this.changeNameRegExp(selectedKey)
+        const matchedImgKey = this.checkKeyWithName(imgKeyNoSpace, selectedKeyReg, imgKey)
+        console.log(matchedImgKey)
+        // 동일인이라도 비슷한 이름으로 여러개로 존재하여 첫번째 이름값을 선정하여 img link 를 얻는다.
+        if(matchedImgKey.length === 0) {
+            return false;
+        }
+        const matchedImgLink = this.selectDjImg(matchedImgKey[0])
+        return matchedImgLink;
     }
 }
