@@ -1,5 +1,8 @@
 ## DJ mag 만들기
 
+[DEMO](https://bangdler.github.io/Cocoa_javascript/)
+ 
+
 1. 프로젝트 개요
     - DJ mag 사이트의 [Top 100 List](https://djmag.com/top100dj?year=2021) 부분처럼 동작하는 웹 만들기.
     - DJ image와 약 10년간 순위 graph를 볼수있다.
