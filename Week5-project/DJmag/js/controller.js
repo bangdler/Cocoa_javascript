@@ -20,13 +20,12 @@ export class Controller {
         //form tag 내에 이벤트 발생 시 preventDefault ;
         e.preventDefault();
         const searchedName = this.view.$djNameSearch.value;
-        const $searchedDj = document.querySelector('#searchedDj')
-        this.view.clearSearchedDj($searchedDj);
+        this.view.clearSearchedDj();
         if(this.isEmpty(searchedName)) return;
         const searchedArray = this.data.getMatchedDj(searchedName)
         if(searchedArray) {
             this.view.renderSearchedDj(searchedArray)
-            this.selectEventListener($searchedDj);
+            this.selectEventListener(this.view.$searchedDj);
         }
     }
 
@@ -73,14 +72,13 @@ export class Controller {
     // 해당년도 버튼 클릭 시 top100List render, select 이벤트를 걸어준다.
     dropdownButtonHandler(e) {
         const target = e.target;  // dropdown menu tag 이벤트 위임.
-        const $searchedDj = document.querySelector('#searchedDj')
-        this.view.clearSearchedDj($searchedDj);
+        this.view.clearSearchedDj();
 
         if(target.className !== 'dropdown-item') return;
         const yearKey = target.id;
         const yearTop100 = this.data.top100Data[yearKey]
         this.view.renderYearTop100(yearTop100, yearKey)
-        this.selectEventListener($searchedDj)
+        this.selectEventListener(this.view.$searchedDj)
     }
 
     selectImageHandler(selectedKey) {
@@ -93,15 +91,14 @@ export class Controller {
     clickUrlListener(selectedKey) {
         const $djUrl = document.querySelector('#djUrl')
         $djUrl.classList.replace('hidden', 'unhidden')
-        console.log(selectedKey)
-        selectedKey = selectedKey.replace(/ /g,"+")
-        console.log(selectedKey)
+        // selectedKey = selectedKey.replace(/ /g,"+") 변환 없어도 인식이 됨.
         $djUrl.addEventListener('click', (e) => this.urlHandler(e, selectedKey))
     }
 
     // 이름이 한번 고정되면 안바뀜...
     urlHandler(e, selectedKey) {
         const target = e.target;
+        console.log(selectedKey)
         window.open(`https://www.last.fm/music/${selectedKey}`)
     }
 

@@ -103,4 +103,12 @@
     - 이미지 보여주기
         1. 이미지 parsing data 가공.
         2. key : dj name, value : image 주소 객체 생성
-        3. select 함수 실행 시 이미지 render.  
+        3. select 함수 실행 시 이미지 render.
+        
+    - dj url 연결하기
+        1. 선택된 dj name 을 window.open 을 이용하여 음악 사이트로 연동해주었다.
+        2. ```javascript 
+           // selected key 에 dj name 이 들어간다.
+           window.open(`https://www.last.fm/music/${selectedKey}`)
+            ```
+        3. 첫번째 선택된 dj url 은 잘 켜지는데, 그 뒤에 다른 dj를 선택해도 계속 첫번째 dj url 이 활성화된다.

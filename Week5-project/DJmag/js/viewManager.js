@@ -3,26 +3,26 @@ export class ViewManager {
     constructor() {
         this.$djNameSearch = document.querySelector('#djNameSearch');
         this.chart = null;
+        this.$searchedDj = document.querySelector('#searchedDj')
+        this.$djImg = document.querySelector('#djImg')
     }
 
     //검색된 dj 이름들이 링크로 보여진다.
     renderSearchedDj(djNameArray) {
-        const $searchedDj = document.querySelector('#searchedDj')
         djNameArray.forEach(function (dj) {
-            $searchedDj.innerHTML += `<li><span role="button" tabindex="0" class="djSelect" id="${dj}">${dj}</span></li>`
-        })
+            this.$searchedDj.innerHTML += `<li><span role="button" tabindex="0" class="djSelect" id="${dj}">${dj}</span></li>`
+        }, this)
     }
 
-    clearSearchedDj($searchedDj) {
-        $searchedDj.innerHTML = null;
+    clearSearchedDj() {
+        this.$searchedDj.innerHTML = null;
     }
 
     renderYearTop100(yearTop100, yearKey) {
-        const $searchedDj = document.querySelector('#searchedDj')
-        $searchedDj.innerHTML = `<div class="col-4">${yearKey}년 TOP 100 LIST</div>`
+        this.$searchedDj.innerHTML = `<div class="col-4">${yearKey}년 TOP 100 LIST</div>`
         yearTop100.forEach(function (dj, index) {
-            $searchedDj.innerHTML += `<li><span role="button" tabindex="0" class="djSelect" id="${dj}">${index + 1}위 ${dj}</span></li>`
-        })
+            this.$searchedDj.innerHTML += `<li><span role="button" tabindex="0" class="djSelect" id="${dj}">${index + 1}위 ${dj}</span></li>`
+        }, this)
     }
 
     renderDjName(selectedKey) {
@@ -87,12 +87,16 @@ export class ViewManager {
     }
 
     renderDjImg(djImgLink) {
-        const $djImg = document.querySelector('#djImg')
         if(!djImgLink) {
-            $djImg.innerHTML = `<img src="https://www.seekpng.com/png/detail/423-4235598_no-image-for-noimage-icon.png" class="img-thumbnail" alt="...">`
+            this.$djImg.innerHTML = `<img src="https://www.seekpng.com/png/detail/423-4235598_no-image-for-noimage-icon.png" class="img-thumbnail" alt="...">`
         }
         else {
-            $djImg.innerHTML = `<img src="${djImgLink}" class="img-fluid" alt="...">`
+            this.$djImg.innerHTML = `<img src="${djImgLink}" class="img-fluid" alt="...">`
         }
     }
+
+    renderInitView() {
+
+    }
+
 }
