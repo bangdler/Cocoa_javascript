@@ -151,14 +151,16 @@
     
     - ```startGame(stageNum = 1), getInput()```
         - startGame 실행 시 단계를 설정하여 게임을 시작한다. getInput 실행하여 ```readline.question```을 활용하여 사용자 입력을 받는다.
-        - 이 때 입력값에 대해 filtering 한다. (q-> 종료, wasd -> movePlayer, 그 외 -> 유효하지 않은 값)
+        - 이 때 입력값에 대해 filtering 한다.
+        - q -> 종료, wasd -> movePlayer(입력값 최대 길이는 5), 그 외 -> 유효하지 않은 값
         - filtering 을 위해 입력값은 모두 소문자로 변경한다. 
        
     - ```movePlayer(commands)```
         - 입력받은 commands 를 순회하면서 각 command 에 해당하는 작업을 수행한다.
         
         - StageManager 에서 현재 stage 의 player 위치를 가져와 command 에 따라 위치를 nextXY로 변경한다. 
-        - 이 때 변경되는 위치가 비어있는 경우 (' ': -1) 에만 수행하도록 ```stageManager.isEmptyLocation(this.stageNum, nextXY)```를 실행한다.
+        - 이 때 배열에서 위치를 변경해주기 때문에 기존 stageInfo 의 player 위치 기준점을 0,0 으로 변경했다. 
+        - 변경되는 위치가 비어있는 경우 (' ': -1) 에만 수행하도록 ```stageManager.isEmptyLocation(this.stageNum, nextXY)```를 실행한다.
         - 변경이 가능할 경우 stageManager 에서 ```modifyStageInfo``` 로 관리하는 정보를 변경해준다. 
            ```javascript
               modifyStageInfo(stageNum, currentXY, nextXY) {
@@ -171,7 +173,7 @@
                   this.stages[stageNum-1].currentMap[nextXY[0]][nextXY[1]] = this.symbol['P']; 
               }
            ```
-            -> 이 부분을 해주지 않으면 기존 player 가 그대로 map 에 남아있어 출력 시 P 가 2개가 되고 갈 곳이 없어지더라. 
+            -> 이 부분을 해주지 않으면 기존 player 가 그대로 map 에 남아있어 출력 시 P 가 2개가 되고 갈 곳이 없어진다. 
         - 다음 순회를 위해 변경된 위치를 현재 위치로 맞춰줘야 한다. 
            ```javascript
               currentXY = nextXY;  
@@ -195,9 +197,8 @@
    ###  o  ###
     #   O  #  
     ########  
+   
    Sokoban> a
-   [ 3, 5 ]
-   [ -1, -1 ]
    A: 왼쪽으로 이동합니다. 
      #######  
    ###  O  ###
@@ -206,11 +207,8 @@
    ###  o  ###
     #   O  #  
     ########  
-   [ 3, 4 ]
-   [ 3, 4 ]
+   
    Sokoban> w
-   [ 3, 4 ]
-   [ -1, -1 ]
    W: 위쪽으로 이동합니다. 
      #######  
    ###  O  ###
@@ -219,11 +217,8 @@
    ###  o  ###
     #   O  #  
     ########  
-   [ 2, 4 ]
-   [ 2, 4 ]
+   
    Sokoban> d
-   [ 2, 4 ]
-   [ -1, -1 ]
    D: (경고!) 해당 명령을 수행할 수 없습니다! 
      #######  
    ###  O  ###
@@ -232,11 +227,8 @@
    ###  o  ###
     #   O  #  
     ########  
-   [ 2, 4 ]
-   [ 2, 5 ]
+   
    Sokoban> sd
-   [ 2, 4 ]
-   [ -1, -1 ]
    S: 아래쪽으로 이동합니다. 
      #######  
    ###  O  ###
@@ -245,8 +237,6 @@
    ###  o  ###
     #   O  #  
     ########  
-   [ 3, 4 ]
-   [ 3, 4 ]
    D: 오른쪽으로 이동합니다. 
      #######  
    ###  O  ###
@@ -255,8 +245,118 @@
    ###  o  ###
     #   O  #  
     ########  
-   [ 3, 5 ]
-   [ 3, 5 ]
+   
    Sokoban> q
    Bye~~
    ``` 
+
+### 3단계: 소코반 완성하기
+
+1. 추가 구현 필요한 기능
+    - r 입력 시 stage 초기화
+    - 모든 o 를 O 에 이동하면 clear 및 다음 stage => 구현 완료
+    - 모든 stage clear 시 축하메세지 => 구현 완료
+    - player 이동 조건
+       - player 는 o 를 밀어서 이동시킬수 있다. => 구현 완료
+       - o 를 O 에 넣으면 0 이 된다. => 구현 완료
+       - 플레이어는 O를 통과할 수 있다. => 구현 완료
+       - 플레이어는 #을 통과할 수 없다. => 구현 완료
+       - 0 상태의 o를 밀어내면 다시 o와 O로 분리된다. => 구현 완료
+       - 플레이어가 움직일 때마다 턴수를 카운트한다. => 구현 완료
+       - o 가 두 개 연속으로 붙어있는 경우 밀 수 없다. => 구현 완료
+       
+2. 구현
+
+    (0) 기존 함수 refactoring
+      - stageNum 은 stageManager 에서 많이 사용되어 stageManager constructor 로 이동.
+      - 조건에 따라 map 이 변경되는 경우의 수가 너무 많아 기존 코드에 손을 대기가 어려웠다.
+            
+      - 2단계에서는 movePlayer 함수 실행 시 isEmptyLocation 함수로 비어있는 곳을 확인 후, modifyStageInfo 함수로 data 변경을 수행했지만, 이동 위치에 발생할 모든 경우의 수에 따른 data 변경을 구성하자니 movePlayer 함수가 너무 복잡해졌다.
+    
+      - 하여 stage data 를 관리하는 ```stageManager.modifyStageInfo ```에서 모든 경우의 수 확인과 data 변경을 수행하도록 구성했다.
+      - ```movePlayer``` 에서 player 의 위치는 계속 update 가 되므로 for 문 안에 ```let currentCoord = this.stageManager.getPlayerLocation()``` 으로 현재 위치를 선언해줌으로써, ```currentCoord = nextCoord``` 를 해줄 필요가 없어졌다. 
+      
+    (1) player 이동 조건
+        
+      - 우선 2단계에 완성한 player 이동 코드에 추가적인 조건을 구현해보았다.
+      
+      - movePlayer 는 이름만 Move 고 사실 이동 시 command 전달, message 와 map 출력만 수행..
+      
+      - 경우의 수를 나누면서 symbol 을 추가하여 각 경우에 따른 코드 구현을 쉽도록 하였다. 
+        ```javascript
+        //hole 위에 ball 이 있는 경우 0 을 추가, 여기에 착안하여 hole 위에 player 가 있는 경우를 B 로 추가.
+        //출력 시에는 B 는 6으로 변환되었다가 P 로 출력
+        this.symbol = {
+            ' ': -1,    // 빈칸
+            '#': 0,     // 벽
+            'O': 1,     // hole
+            'o': 2,     // ball
+            'P': 3,     // player
+            '=': 4,     // stage map end
+            '0': 5,     // ball in hole
+            'B': 6      // player in hole
+        };
+        this.reverseSymbol = {
+            0: '#',
+            1: 'O',
+            2: 'o',
+            3: 'P',
+            5: '0',
+            6: 'P'
+        };
+        ```
+      - 경우의 수
+        - 초기 함수 세팅
+           ```javascript
+           // 현재 위치, 다음 위치, command 에 따른 ball 의 다음 위치 설정. 볼/구멍 여부 설정
+           modifyStageInfo(currentCoord, nextCoord, direction) {
+                  let ballExist = false;
+                  let holeExist = false;
+                  let nextBallCoord = [-1, -1];
+                  nextBallCoord[0] = nextCoord[0] + direction[0];
+                  nextBallCoord[1] = nextCoord[1] + direction[1]; }
+          ``` 
+        - 우선 player 가 가는 위치를 확인하고 갈 수 없는 경우를 거른다. 
+            1. Player 가 갈 수 있는 위치인가(벽만 아니면 감) / 아니면 false
+            2. Player 가 가는 곳 o : ball exist true
+               1. 공이 갈 수 있는 위치인가 (빈 곳과 O 이면 감) / 아니면 false
+            3. Player 가 가는 곳 O : hole exist true 
+        - Player 가 갈 수 있는 게 확인되었으므로 stages.player 위치를 update 한다. ```setPlayerLocation```활용
+        - 현재 위치에 따라 변경되는 현재 위치 경우의 수
+            1. 현재 위치가 P : 이동 시 빈칸
+            2. 현재 위치가 B : 이동 시 O
+        - 현재 위치 변경 완료, 가는 곳의 위치는 hole, ball 존재 여부에 따라 경우의 수를 나누어 변경한다.
+            1. 가는 위치가 빈칸 : 이동 시 P
+            2. 가는 위치가 O : 이동 시 B
+            3. 가는 위치가 o : 이동 시 P, ball 이동
+                1. ball 다음 위치가 빈칸 : ball 이동 시 o
+                2. ball 다음 위치가 O : ball 이동 시 0 (ballInHole)
+            4. 가는 위치가 0(ballInHole) : 이동 시 B, ball 이동
+                1. ball 다음 위치가 빈칸 : ball 이동 시 o
+                2. ball 다음 위치가 O : ball 이동 시 0 (ballInHole)
+                
+      - 경우의 수 빠진 것을 발견하고 추가해가다보니 함수가 너무 길어진 것 같다...
+      - 이 때 반복되는 물체의 위치 확인, 위치 변경 코드를 함수로 만들어 간결화게 만들었다. 
+        ```javascript 
+        // 해당 위치에 있는 물체를 구한다.
+        getObject(coord) {
+            return this.stages[this.stageNum-1].currentMap[coord[0]][coord[1]];
+        }
+        // 해당 위치에 물체를 위치시킨다.
+        setObject(coord, object) {
+            this.stages[this.stageNum-1].currentMap[coord[0]][coord[1]] = object;
+        }
+        ```
+    (2) Stage Clear 
+      
+      - stage clear 조건은 ```ballInHole 갯수 = Hole 갯수``` 이므로 ballInHole 을 stageInfo 에 추가했다.
+      - map 초기에 ballInHole 이 있는 경우도 있으니 최초 map data 변환 시(```makeStagesFromMap```) ballInHole count 도 해준다.
+      
+      - 이후 player 이동 시 0 이 생길 때 +1, 0 에서 이동될 때 -1 을 한다.
+      - 한 턴 이동 시마다 clear 조건을 확인한다. ```checkStageClear``` 활용.
+      - clear 시 ```moveNextStage```를 통해 다음 stage 로 이동하며, 이 때 ```levelUp```으로 stageNum +1, turn수 초기화를 수행한다.
+      - leveUp 이후 stageNum 가 stages 배열 길이보다 크다면 종료, 아니면 다음 stage map 을 출력한다. 
+      - checkStageClear 와 leveUp 함수는 stage data 관련되어 stageManager 에 포함하였고, moveNextStage 는 종료, 출력 등을 수행하므로 PlayerManager에 넣었다.
+      
+      
+      
