@@ -31,7 +31,7 @@
       
       (2) Stage 의 필요 정보 반환
       
-          가로크기, 세로크기, 구멍의 수, 공의 수, 플레이어 위치(1,1 기준) -> (2단계에서 0,0 기준으로 변경)
+          가로크기, 세로크기, 구멍의 수, 공의 수, 플레이어 위치(1,1 기준) => (2단계에서 0,0 기준으로 변경)
         
     - 구현
     
@@ -152,7 +152,7 @@
     - ```startGame(stageNum = 1), getInput()```
         - startGame 실행 시 단계를 설정하여 게임을 시작한다. getInput 실행하여 ```readline.question```을 활용하여 사용자 입력을 받는다.
         - 이 때 입력값에 대해 filtering 한다.
-        - q -> 종료, wasd -> movePlayer(입력값 최대 길이는 5), 그 외 -> 유효하지 않은 값
+        - q => 종료, wasd => movePlayer(입력값 최대 길이는 5), 그 외 => 유효하지 않은 값
         - filtering 을 위해 입력값은 모두 소문자로 변경한다. 
        
     - ```movePlayer(commands)```
@@ -161,6 +161,26 @@
         - StageManager 에서 현재 stage 의 player 위치를 가져와 command 에 따라 위치를 nextXY로 변경한다. 
         - 이 때 배열에서 위치를 변경해주기 때문에 기존 stageInfo 의 player 위치 기준점을 0,0 으로 변경했다. 
         - 변경되는 위치가 비어있는 경우 (' ': -1) 에만 수행하도록 ```stageManager.isEmptyLocation(this.stageNum, nextXY)```를 실행한다.
+           ```javascript
+              // 기존 위치에 command 를 순회하며 신규 위치를 더해준 nextXY를 stageManager 에 update 하여 출력한다.
+              movePlayer(commands) {
+                  let currentXY = this.stageManager.getPlayerLocation(this.stageNum)
+                  for(let i = 0; i < commands.length; i++){
+                      let command = commands[i];
+                      let nextXY = [-1, -1];
+                      nextXY[0] = currentXY[0] + this.directions[command][0];
+                      nextXY[1] = currentXY[1] + this.directions[command][1];
+                      if(this.stageManager.isEmptyLocation(this.stageNum, nextXY)){
+                          this.alertMessage(command, true);
+                          this.stageManager.modifyStageInfo(this.stageNum, currentXY, nextXY);
+                          currentXY = nextXY;
+                      }else{
+                          this.alertMessage(command, false);
+                      }
+                      this.stageManager.printThisMap(this.stageNum)
+                  }
+              }
+           ``` 
         - 변경이 가능할 경우 stageManager 에서 ```modifyStageInfo``` 로 관리하는 정보를 변경해준다. 
            ```javascript
               modifyStageInfo(stageNum, currentXY, nextXY) {
@@ -173,7 +193,7 @@
                   this.stages[stageNum-1].currentMap[nextXY[0]][nextXY[1]] = this.symbol['P']; 
               }
            ```
-            -> 이 부분을 해주지 않으면 기존 player 가 그대로 map 에 남아있어 출력 시 P 가 2개가 되고 갈 곳이 없어진다. 
+            => 이 부분을 해주지 않으면 기존 player 가 그대로 map 에 남아있어 출력 시 P 가 2개가 되고 갈 곳이 없어진다. 
         - 다음 순회를 위해 변경된 위치를 현재 위치로 맞춰줘야 한다. 
            ```javascript
               currentXY = nextXY;  
@@ -253,7 +273,7 @@
 ### 3단계: 소코반 완성하기
 
 1. 추가 구현 필요한 기능
-    - r 입력 시 stage 초기화
+    - r 입력 시 stage 초기화 => 구현 완료
     - 모든 o 를 O 에 이동하면 clear 및 다음 stage => 구현 완료
     - 모든 stage clear 시 축하메세지 => 구현 완료
     - player 이동 조건
@@ -358,5 +378,446 @@
       - leveUp 이후 stageNum 가 stages 배열 길이보다 크다면 종료, 아니면 다음 stage map 을 출력한다. 
       - checkStageClear 와 leveUp 함수는 stage data 관련되어 stageManager 에 포함하였고, moveNextStage 는 종료, 출력 등을 수행하므로 PlayerManager에 넣었다.
       
+    (3) Stage 초기화
+    
+      - r 을 입력하면 map 이 초기화 된다.
       
+      - stageManager 생성자에 this.originalStages 를 만들어 놓고 초기값으로 사용했다.
       
+      - 이후 r 입력 시 ```resetStage``` 가 실행되어 ```this.stages = this.originalStages``` 로 바꿔준다.
+      
+      - 이 때 originalStages 가 stages 와 일치되는 문제가 발생하는데 얕은 복사가 된 것으로 판단하여 깊은 복사가 되도록 변경했다.
+        - JSON stringify, parse 을 이용하여 문자열 변환 후 다시 Object로 변환했더니 clear
+        
+      - turn 수 초기화도 수행되어야 해서 기존 생성자에 있던 this.turnCount 를 stageInfo 에 포함했다. 이렇게하면 stage 가 초기회되는 순간 Info 도 초기화되기 때문에 별도로 초기화를 해줄 필요가 없다. 
+      
+      - levelUp 에서도 turn 수 초기화 불필요하여 삭제, 대신 stageInfo 생성 시 매개변수가 너무 많아지고 있다. 
+      
+      - playerManager 에서 turn 수 출력을 위한 ```getStageTurnCount()``` 구현 
+     
+3. Refactoring 및 map text file 읽기
+
+    - text file 읽기는 fs module 을 사용하여 구현 가능했다.
+        ```javascript
+        constructor(fileName) {
+             this.data = fs.readFileSync(`./${fileName}.txt`, 'utf-8'); }
+        ```
+    - map text file 을 읽어 처리하기를 구현하던 중, file 을 읽고 문자열로부터 stage info 를 받는 부분은 별도 class 로 분리하는게 더 직관적일 것 같다고 생각.
+    
+    - 이에 dataManager class 를 추가로 만들었다. 
+    
+    - 변경된 구성
+        - dataManager : map text 파일을 읽고 문자열로 변환, 변환된 문자열에서 필요 정보를 추출한다.
+            0. 직접적인 data 관리, stageManager 로부터 요청 받아 data 를 수정하고 반환한다. 
+            1. 문자열을 이차원 배열로 변환 => current map 
+            2. stageNum, x(가로크기), y(세로크기), hole, ball, player, ballInHole 구하고 turnCount Setting
+            3. 위 정보로 각 stage 마다 stageInfo 객체를 만들어 해당 객체로 구성된 stages 배열을 만든다. 
+        -  stageManager : 해당 stage 의 정보를 dataManager 로부터 받는다. playerManager 에서 요청한 작업을 dataManager 에 전달하고 console 출력을 위한 반환값을 준다.
+            0. stage 1 에서 시작, 기본 stageInfo 받음.
+            1. 해당 stage current map 을 symbol 로 변환
+            2. playerManager command 요청에 따른 로직 함수 modifyStageInfo 수행하여 dataManager data 변경
+            3. 변경된 data를 통해 stage levelUp, stageClear 여부 확인.
+        - playerManager : gameStart, console 입력 받기, 입력값을 stageManager에 전달하고 입력에 따라 처리/종료
+            0. command 에 따라 종료, player 이동, stage clear, stage reset, stage levelUp 등 수행
+            1. stageManager 에 전달 받은 값, symbol Map 등 출력 관련 함수 포함.
+    
+    - class 가 많아질수록 각 class 의 생성자 함수 내 method 가 많아지고 다른 class 의 method 사용시 코드가 복잡해져서 작성에 어려움을 준다. 
+
+4. 실행 결과
+    ```javascript
+    // 함수 실행
+   let dataManager = new DataManager('map')
+   let stageManager = new StageManager(dataManager)
+   let playerManager = new PlayerManager(stageManager)
+   playerManager.startGame()
+    ```
+   ```
+   Stage : 1
+   #####
+   #OoP#
+   #####
+   Sokoban> a
+   A: 왼쪽으로 이동합니다.
+   
+   #####
+   #0P #
+   #####
+   빠밤! 
+   Turn 수 : 1
+   Stage : 2
+     #######  
+   ###  O  ###
+   #    o    #
+   # Oo P oO #
+   ###  o  ###
+    #   O  #  
+    ########  
+   Sokoban> wssw
+   W: 위쪽으로 이동합니다.
+   
+     #######  
+   ###  0  ###
+   #    P    #
+   # Oo   oO #
+   ###  o  ###
+    #   O  #  
+    ########  
+   S: 아래쪽으로 이동합니다.
+   
+     #######  
+   ###  0  ###
+   #         #
+   # Oo P oO #
+   ###  o  ###
+    #   O  #  
+    ########  
+   S: 아래쪽으로 이동합니다.
+   
+     #######  
+   ###  0  ###
+   #         #
+   # Oo   oO #
+   ###  P  ###
+    #   0  #  
+    ########  
+   W: 위쪽으로 이동합니다.
+   
+     #######  
+   ###  0  ###
+   #         #
+   # Oo P oO #
+   ###     ###
+    #   0  #  
+    ########  
+   Sokoban> aa
+   A: 왼쪽으로 이동합니다.
+   
+     #######  
+   ###  0  ###
+   #         #
+   # OoP  oO #
+   ###     ###
+    #   0  #  
+    ########  
+   A: 왼쪽으로 이동합니다.
+   
+     #######  
+   ###  0  ###
+   #         #
+   # 0P   oO #
+   ###     ###
+    #   0  #  
+    ########  
+   Sokoban> dddd
+   D: 오른쪽으로 이동합니다.
+   
+     #######  
+   ###  0  ###
+   #         #
+   # 0 P  oO #
+   ###     ###
+    #   0  #  
+    ########  
+   D: 오른쪽으로 이동합니다.
+   
+     #######  
+   ###  0  ###
+   #         #
+   # 0  P oO #
+   ###     ###
+    #   0  #  
+    ########  
+   D: 오른쪽으로 이동합니다.
+   
+     #######  
+   ###  0  ###
+   #         #
+   # 0   PoO #
+   ###     ###
+    #   0  #  
+    ########  
+   D: 오른쪽으로 이동합니다.
+   
+     #######  
+   ###  0  ###
+   #         #
+   # 0    P0 #
+   ###     ###
+    #   0  #  
+    ########  
+   빠밤! 
+   Turn 수 : 10
+   Stage : 3
+     #########
+     ##   O  #
+   ##O   oo ##
+    ### P   ##
+      ######  
+   Sokoban> dw
+   D: 오른쪽으로 이동합니다.
+   
+     #########
+     ##   O  #
+   ##O   oo ##
+    ###  P  ##
+      ######  
+   W: 위쪽으로 이동합니다.
+   
+     #########
+     ##  oO  #
+   ##O   Po ##
+    ###     ##
+      ######  
+   Sokoban> awd
+   A: 왼쪽으로 이동합니다.
+   
+     #########
+     ##  oO  #
+   ##O  P o ##
+    ###     ##
+      ######  
+   W: 위쪽으로 이동합니다.
+   
+     #########
+     ## PoO  #
+   ##O    o ##
+    ###     ##
+      ######  
+   D: 오른쪽으로 이동합니다.
+   
+     #########
+     ##  P0  #
+   ##O    o ##
+    ###     ##
+      ######  
+   Sokoban> sss
+   S: 아래쪽으로 이동합니다.
+   
+     #########
+     ##   0  #
+   ##O   Po ##
+    ###     ##
+      ######  
+   S: 아래쪽으로 이동합니다.
+   
+     #########
+     ##   0  #
+   ##O    o ##
+    ###  P  ##
+      ######  
+   S: (경고!) 해당 명령을 수행할 수 없습니다!
+   
+     #########
+     ##   0  #
+   ##O    o ##
+    ###  P  ##
+      ######  
+   Sokoban> ddw
+   D: 오른쪽으로 이동합니다.
+   
+     #########
+     ##   0  #
+   ##O    o ##
+    ###   P ##
+      ######  
+   D: 오른쪽으로 이동합니다.
+   
+     #########
+     ##   0  #
+   ##O    o ##
+    ###    P##
+      ######  
+   W: 위쪽으로 이동합니다.
+   
+     #########
+     ##   0  #
+   ##O    oP##
+    ###     ##
+      ######  
+   Sokoban> aaaaa
+   A: 왼쪽으로 이동합니다.
+   
+     #########
+     ##   0  #
+   ##O   oP ##
+    ###     ##
+      ######  
+   A: 왼쪽으로 이동합니다.
+   
+     #########
+     ##   0  #
+   ##O  oP  ##
+    ###     ##
+      ######  
+   A: 왼쪽으로 이동합니다.
+   
+     #########
+     ##   0  #
+   ##O oP   ##
+    ###     ##
+      ######  
+   A: 왼쪽으로 이동합니다.
+   
+     #########
+     ##   0  #
+   ##OoP    ##
+    ###     ##
+      ######  
+   A: 왼쪽으로 이동합니다.
+   
+     #########
+     ##   0  #
+   ##0P     ##
+    ###     ##
+      ######  
+   빠밤! 
+   Turn 수 : 15
+   Congratulations! All Stage Clear!
+   ```
+
+5. Stage 5 까지 구현 후 수정 사항
+    - 0 (ballInHole) 이 있는 상태의 map 을 구현하였는데 stageClear 가 되지 않음.
+    
+    - 원인: 초기 stageInfo 에 data 를 저장할 때 0 인 경우 hole 과 ball 갯수를 count 해줘야함.
+        ```javascript
+         else if(row[i] === '0') {
+                                ballInHole += 1;
+                                hole += 1;
+                                ball += 1;
+                            }
+        ```
+    - 실행 결과
+        ```
+          // 초기 화면
+          Stage : 5
+          ######## 
+          #      # 
+          # ##oo ##
+          #   0  O#
+          #P# o####
+          #O  O#   
+          ######   
+          
+          // clear 
+          ######## 
+          #      # 
+          # ##P  ##
+          #   0  0#
+          # #  ####
+          #0  0#   
+          ######   
+                   
+          빠밤! 
+          Turn 수 : 45
+          Congratulations! All Stage Clear!
+        ```
+      
+### 3단계: 소코반 완성하기
+
+1. 추가 기능
+    
+    (1) 저장 및 불러오기
+        
+      - dataManager 에 saveSlot 객체를 만들어 저장이 필요한 data 를 저장할 수 있도록 한다.
+      
+      - playerManager 로부터 saveLoadKeyword 를 받으면 ```saveNloadStage``` 를 실행한다.
+      
+        ```javascript
+        // keywords 로 5개 슬로를 만든다.
+        this.saveLoadKeyword = {
+                   '1s': [1, "save"],
+                   '2s': [2, "save"],
+                   '3s': [3, "save"],
+                   '4s': [4, "save"],
+                   '5s': [5, "save"],
+                   '1l': [1, "load"],
+                   '2l': [2, "load"],
+                   '3l': [3, "load"],
+                   '4l': [4, "load"],
+                   '5l': [5, "load"]            
+               }
+        // 입력값에 맞는 stageManager 함수를 실행한다. 
+        saveNloadStage(command) {
+               let saveNum = this.saveLoadKeyword[command][0];
+               let saveKey = this.saveLoadKeyword[command][1];
+               if(saveKey === 'save') {
+                   this.stageManager.saveThisSlot(saveNum)
+                   console.log(`${saveNum}번 슬로 ${saveKey} 합니다.`)
+                   this.printThisMap();
+              }
+               else if(saveKey === 'load') {
+                   this.stageManager.loadThisSlot(saveNum)
+                   console.log(`${saveNum}번 슬로 ${saveKey} 합니다.`)
+                   this.printThisMap();
+               }
+        }
+        ``` 
+   
+      - StageManager 함수에서는 DataManager 에 전체 stages, 현재 stage, stageNum 값을 복사해준다. 
+      - stages 를 복사하는 이유 : save 이후 stage 변동 사항이 있을 경우 load 시 이후 변동 사항은 반영되면 안되기 때문.
+        ```javascript
+        saveThisSlot(Num) {
+            const saveStages = JSON.stringify(this.dataManager.stages);
+            const saveStage = JSON.stringify(this.stage);
+            const saveStageNum = this.stageNum;
+            this.dataManager.saveSlot[Num] = [JSON.parse(saveStages), JSON.parse(saveStage), saveStageNum]
+        }
+            
+        loadThisSlot(Num) {
+            const loadStages = JSON.stringify(this.dataManager.saveSlot[Num][0]);
+            const loadStage = JSON.stringify(this.dataManager.saveSlot[Num][1])
+            const loadStageNum = this.dataManager.saveSlot[Num][2];
+            this.dataManager.stages = JSON.parse(loadStages);
+            this.stage = JSON.parse(loadStage);
+            this.stageNum = loadStageNum;
+        }
+        ```
+       
+    - 실행 결과
+        ```
+        #######  
+      ###  O  ###
+      #    o    #
+      # 0P   oO #
+      ###  o  ###
+       #   O  #  
+       ########  
+      Sokoban> 1s
+      1번 슬로 save 합니다.
+        #######  
+      ###  O  ###
+      #    o    #
+      # 0P   oO #
+      ###  o  ###
+       #   O  #  
+       ########  
+      Sokoban> d
+      D: 오른쪽으로 이동합니다.
+      
+        #######  
+      ###  O  ###
+      #    o    #
+      # 0 P  oO #
+      ###  o  ###
+       #   O  #  
+       ########  
+      Sokoban> d
+      D: 오른쪽으로 이동합니다.
+      
+        #######  
+      ###  O  ###
+      #    o    #
+      # 0  P oO #
+      ###  o  ###
+       #   O  #  
+       ########  
+      Sokoban> 1l
+      1번 슬로 load 합니다.
+        #######  
+      ###  O  ###
+      #    o    #
+      # 0P   oO #
+      ###  o  ###
+       #   O  #  
+       ########  
+        ```

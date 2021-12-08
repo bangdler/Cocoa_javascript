@@ -1,7 +1,13 @@
-import * as readline from "readline";
 
-class StageManager{
-    constructor(data) {
+
+import * as readline from "readline" ;
+import * as fs from "fs" ;
+
+// text file 로부터 문자열을 받아 문자를 숫자로 된 이차원 배열로 변환하고 각 정보를 구해 stageInfo 객체를 만들고 각 stageInfo 로 이루어진 stages 배열을 얻는다.
+// stageManager 로부터 요청 받은 data 를 수정, 반환
+class DataManager {
+    constructor(fileName) {
+        this.data = fs.readFileSync(`./${fileName}.txt`, 'utf-8');
         this.symbol = {
             ' ': -1,    // 빈칸
             '#': 0,     // 벽
@@ -12,24 +18,14 @@ class StageManager{
             '0': 5,     // ball in hole
             'B': 6      // player in hole
         };
-
-        this.reverseSymbol = {
-            0: '#',
-            1: 'O',
-            2: 'o',
-            3: 'P',
-            5: '0',
-            6: 'P'
-        };
-        this.originalStages = this.makeStagesFromMap(data);
-        this.stages = this.makeStagesFromMap(data);
-        this.stageNum = 1;
-        //this.turnCount = 0;
+        this.originalStages = this.makeStagesFromMap();
+        this.stages = this.makeStagesFromMap();
+        this.saveSlot = {};
     }
 
     // 문자열 map data 를 받아 각 stage 의 정보(stage no., map 배열, 가로/세로 길이, hole/ball 개수, player 위치) 를 담은 배열을 반환한다.
-    makeStagesFromMap(data) {
-        let rows = data.split('\n');
+    makeStagesFromMap() {
+        let rows = this.data.split('\n');
         let stages = [];
         let currentMap = [];
         let stageNum = 0;
@@ -56,7 +52,11 @@ class StageManager{
                     if(row[i] === 'O') hole += 1;
                     else if(row[i] === 'o') ball += 1;
                     else if(row[i] === 'P') player = [y, i];
-                    else if(row[i] === '0') ballInHole += 1;
+                    else if(row[i] === '0') {
+                        ballInHole += 1;
+                        hole += 1;
+                        ball += 1;
+                    }
                 }
                 if(row[0] !== '=') y += 1;
                 currentMap.push(changedRow)
@@ -93,6 +93,34 @@ class StageManager{
         })
         return currentMap
     }
+}
+
+// playerManager 에서 발생한 이벤트에 따라 필요한 data 수정을 dataManager 에 요청하고 반환값을 다시 전달한다.
+class StageManager{
+    constructor(dataManager) {
+        this.dataManager = dataManager;
+        this.stageNum = 1;
+        this.stage = this.dataManager.stages[this.stageNum - 1]
+        this.originalStage = this.dataManager.originalStages[this.stageNum - 1]
+        this.symbol = this.dataManager.symbol;
+        this.reverseSymbol = {
+            0: '#',
+            1: 'O',
+            2: 'o',
+            3: 'P',
+            5: '0',
+            6: 'P'
+        };
+    }
+
+    getStages() {
+        return this.dataManager.stages;
+    }
+
+    // 특정 stage map 을 반환한다.
+    getStageCurrentMap() {
+        return this.stage['currentMap'];
+    }
 
     // 숫자로 저장된 currentMap 을 다시 symbol로 바꾸어 반환한다.
     getSymbolMap(currentMap) {
@@ -115,21 +143,17 @@ class StageManager{
         symbolMap = tempMap.join('\n');
         return symbolMap;
     }
-
+    
     getStageTurnCount() {
-        return this.stages[this.stageNum-1]['turnCount']
-    }
-
-    getStageCurrentMap() {
-        return this.stages[this.stageNum-1]['currentMap']
+        return this.stage['turnCount']
     }
 
     turnCountUp() {
-        this.stages[this.stageNum-1].turnCount += 1;
+        this.stage['turnCount'] += 1;
     }
 
     ballInHoleCount(count) {
-        this.stages[this.stageNum-1].ballInHole += count;
+        this.stage['ballInHole'] += count;
     }
 
     getStageNumber() {
@@ -137,21 +161,21 @@ class StageManager{
     }
 
     getPlayerLocation() {
-        return this.stages[this.stageNum-1]['player'];
+        return this.stage['player'];
     }
 
     setPlayerLocation(nextCoord) {
-        this.stages[this.stageNum-1]['player'] = nextCoord;
+        this.stage['player'] = nextCoord;
     }
 
     // 해당 위치에 있는 물체를 구한다.
     getObject(coord) {
-        return this.stages[this.stageNum-1].currentMap[coord[0]][coord[1]];
+        return this.stage['currentMap'][coord[0]][coord[1]];
     }
 
     // 해당 위치에 물체를 위치시킨다.
     setObject(coord, object) {
-        this.stages[this.stageNum-1].currentMap[coord[0]][coord[1]] = object;
+        this.stage['currentMap'][coord[0]][coord[1]] = object;
     }
 
     // player 가 갈 수 있는지 확인
@@ -171,15 +195,7 @@ class StageManager{
         return false
     }
 
-    checkStageClear() {
-        if(this.stages[this.stageNum-1].hole === this.stages[this.stageNum-1].ballInHole) {
-            return true
-        }
-        return false
-    }
-
     // 각 경우의 수에 따라 player 와 ball 을 움직인다. 경우의 수는 player, ball, hole 의 위치에 따라 좌우된다.
-
     modifyStageInfo(currentCoord, nextCoord, direction) {
         let ballExist = false;
         let holeExist = false;
@@ -252,15 +268,41 @@ class StageManager{
         return true
     }
 
+    checkStageClear() {
+        if(this.stage['hole'] === this.stage['ballInHole']) {
+            return true
+        }
+        return false
+    }
+
     levelUp() {
         // stage 레벨업, 최종 stage 여부 확인
         this.stageNum += 1;
-        //this.turnCount = 0;
-        if(this.stageNum > this.stages.length) return true;
+        this.stage = this.dataManager.stages[this.stageNum - 1]
+        this.originalStage = this.dataManager.originalStages[this.stageNum - 1]
+        if(this.stageNum > this.dataManager.stages.length) return true;
         return false;
     }
+
+    saveThisSlot(Num) {
+        const saveStages = JSON.stringify(this.dataManager.stages);
+        const saveStage = JSON.stringify(this.stage);
+        const saveStageNum = this.stageNum;
+        this.dataManager.saveSlot[Num] = [JSON.parse(saveStages), JSON.parse(saveStage), saveStageNum]
+    }
+
+    loadThisSlot(Num) {
+        const loadStages = JSON.stringify(this.dataManager.saveSlot[Num][0]);
+        const loadStage = JSON.stringify(this.dataManager.saveSlot[Num][1])
+        const loadStageNum = this.dataManager.saveSlot[Num][2];
+        this.dataManager.stages = JSON.parse(loadStages);
+        this.stage = JSON.parse(loadStage);
+        this.stageNum = loadStageNum;
+    }
+
 }
 
+// 사용자 입력값을 받고 입력에 따라 data 처리 (stageManager 를 통해), 종료, 출력 수행
 class PlayerManager {
     constructor(stageManager) {
         this.stageManager = stageManager
@@ -276,6 +318,18 @@ class PlayerManager {
             'S': "아래쪽",
             'D': "오른쪽"
         };
+        this.saveLoadKeyword = {
+            '1s': [1, "save"],
+            '2s': [2, "save"],
+            '3s': [3, "save"],
+            '4s': [4, "save"],
+            '5s': [5, "save"],
+            '1l': [1, "load"],
+            '2l': [2, "load"],
+            '3l': [3, "load"],
+            '4l': [4, "load"],
+            '5l': [5, "load"]
+        }
     }
 
     startGame() {
@@ -297,11 +351,14 @@ class PlayerManager {
                 console.log('Bye~~');
                 process.exit();
             }
-            else if(this.checkInput(directionCommand)) {
-                this.movePlayer(directionCommand);
-            }
             else if(directionCommand === 'r') {
                 this.resetStage();
+            }
+            else if(this.saveLoadKeyword[directionCommand]) {
+                this.saveNloadStage(directionCommand);
+            }
+            else if(this.checkInput(directionCommand)) {
+                this.movePlayer(directionCommand);
             }
             this.getInput(rl);
         });
@@ -313,7 +370,7 @@ class PlayerManager {
             return false;
         }
         for (let i = 0; i < commands.length; i++){
-            if (!this.directions[commands[i]]) {
+            if (!this.directions[commands[i]] ) {
                 console.log('유효하지 않은 입력입니다.\n');
                 return false;
             }
@@ -321,7 +378,7 @@ class PlayerManager {
         return true;
     }
 
-    // 기존 위치에 command 를 순회하며 신규 위치를 더해준 nextCoord 를 stageManager 에 update 하여 출력한다.
+    // 기존 위치에 command 를 순회하며 신규 위치를 더해준 nextCoord 를 stageManager 에 update 하고 반환값에 따라 출력/종료한다.
     movePlayer(commands) {
         for(let i = 0; i < commands.length; i++) {
             let command = commands[i];
@@ -344,12 +401,6 @@ class PlayerManager {
         }
     }
 
-    // 특정 stage map 을 출력한다.
-    printThisMap() {
-        let thisMap = this.stageManager.getStageCurrentMap();
-        console.log(this.stageManager.getSymbolMap(thisMap))
-    }
-
     alertMessage(command, success) {
         let commandUpper = command.toUpperCase();
         if(!success){
@@ -361,7 +412,7 @@ class PlayerManager {
     }
 
     moveNextStage() {
-        console.log("빠밤! ");
+        console.log("\n빠밤! ");
         console.log(`Turn 수 : ${this.stageManager.getStageTurnCount()}`);
         if(this.stageManager.levelUp()) {
             console.log("Congratulations! All Stage Clear!")
@@ -375,17 +426,23 @@ class PlayerManager {
 
     // Stage 초기화를 위해 Original stage 의 data 를 깊은 복사한다.
     resetStage() {
-        const resetStage = JSON.stringify(this.stageManager.originalStages)
-        this.stageManager.stages = JSON.parse(resetStage)
+        const resetStage = JSON.stringify(this.stageManager.originalStage)
+        this.stageManager.stage = JSON.parse(resetStage)
         console.log (`Stage : ${this.stageManager.stageNum}`)
         this.printThisMap();
     }
 
+    printThisMap() {
+        let thisMap = this.stageManager.getStageCurrentMap();
+        console.log(this.stageManager.getSymbolMap(thisMap))
+    }
+
     // stages 배열의 각 stage 정보를 출력한다.
     printAllStages() {
-        this.stageManager.stages.forEach(function(stage) {
+        const allStageInfo = this.stageManager.getStages();
+        allStageInfo.forEach(function (stage) {
             console.log("Stage ", stage.stageNum, '\n');
-            console.log(this.stageManager.getSymbolMap(stage.currentMap));
+            console.log(this.stageManager.getSymbolMap(stage['currentMap']));
             console.log('\n가로크기: ', stage.x);
             console.log('세로크기: ', stage.y);
             console.log('구멍의 수: ', stage.hole);
@@ -393,23 +450,24 @@ class PlayerManager {
             console.log('플레이어 위치 (', stage.player[0], ', ', stage.player[1], ')\n');
         }, this)
     }
+
+    saveNloadStage(command) {
+        let saveNum = this.saveLoadKeyword[command][0];
+        let saveKey = this.saveLoadKeyword[command][1];
+        if(saveKey === 'save') {
+            this.stageManager.saveThisSlot(saveNum)
+            console.log(`${saveNum}번 슬로 ${saveKey} 합니다.`)
+            this.printThisMap();
+       }
+        else if(saveKey === 'load') {
+            this.stageManager.loadThisSlot(saveNum)
+            console.log(`${saveNum}번 슬로 ${saveKey} 합니다.`)
+            this.printThisMap();
+        }
+    }
 }
 
-// 입력값
-const stageData = "Stage 1\n" +
-    "#####\n" +
-    "#OoP#\n" +
-    "#####\n" +
-    "=====\n" +
-    "Stage 2\n" +
-    "  #######\n" +
-    "###  O  ###\n" +
-    "#    o    #\n" +
-    "# Oo P oO #\n" +
-    "###  o  ###\n" +
-    " #   O  # \n" +
-    " ########"
-
-let stageManager = new StageManager(stageData);
-let playerManager = new PlayerManager(stageManager);
-playerManager.printAllStages()
+let dataManager = new DataManager('map')
+let stageManager = new StageManager(dataManager)
+let playerManager = new PlayerManager(stageManager)
+playerManager.startGame()
