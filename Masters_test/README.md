@@ -820,4 +820,70 @@
       ###  o  ###
        #   O  #  
        ########  
+        ```  
+   (2) 되돌리기 및 되돌리기 취소
+    
+     - u 를 누르면 되돌리기
+     - stageManager 에서 현재 stage 의 turn count 를 key 로 하는 객체 savedTurn 을 만들어 관리한다.
+   
+     - 매번 움직일 때 마다 turnCount +1 하기 전에 saveThisTurn 으로 현재 stage 를 객체에 담는다. 이후 u 누를 때 printPrevTurn 으로 현재 turn - 1 의 순간으로 돌아간다.
+    
+     - 어려웠던 부분은 saveSlot loadSlot 과 Turn 관리가 얽혔던 것. save 를 할 때 savedTurn 객체도 같이 저장해주어 load 시에도 이전에 했던 기록을 바탕으로 되돌리기가 가능하도록 구현하였다.
+   
+       ```javascript
+       // stage 도 깊은 복사를 해주지 않으면 되돌리기 시에도 한번 저장된 stage 값을 계속 가지고 있어, 되돌리기 후 저장해도 이전에 저장했던 맵으로 돌아간다. 
+        saveThisSlot(Num) {
+                                const saveStages = JSON.stringify(this.dataManager.stages);
+                                const saveStage = JSON.stringify(this.stage);
+                                const saveStageNum = this.stageNum;
+                                const saveSavedTurn = JSON.stringify(this.savedTurn)
+                                this.dataManager.saveSlot[Num] = [JSON.parse(saveStages), JSON.parse(saveStage), saveStageNum, JSON.parse(saveSavedTurn)]
+                            }
+       
+       // 해당 slot 에 값이 없으면 false 처리 추가. 
+        loadThisSlot(Num) {
+                                if (!this.dataManager.saveSlot[Num]) return false;
+                                const loadStages = JSON.stringify(this.dataManager.saveSlot[Num][0]);
+                                const loadStage = JSON.stringify(this.dataManager.saveSlot[Num][1])
+                                const loadStageNum = this.dataManager.saveSlot[Num][2];
+                                const loadSavedTurn = JSON.stringify(this.dataManager.saveSlot[Num][3]);
+                                this.dataManager.stages = JSON.parse(loadStages);
+                                this.stage = JSON.parse(loadStage);
+                                this.stageNum = loadStageNum;
+                                this.savedTurn = JSON.parse(loadSavedTurn);
+                                return true;
+                           }
         ```
+     - level up 시에는 savedTurn 객체를 초기화해준다. 한 stage 에서만 유효함.
+     
+     - turn 수가 0 이면 더이상 돌아갈 수 없음으로 알림.
+     
+     - 되돌리기 취소는 역으로 현재 turn 수에서 +1 을 한 상태의 stage 를 print 한다. 
+     
+       ```javascript
+
+           // 현재 turn 을 복사하여 savedTurn 객체에 저장한다. turnKey type은 number.
+           saveThisTurn() {
+               const turnKey = this.getStageTurnCount();
+               const thisStage = JSON.stringify(this.stage);
+               this.savedTurn[turnKey] = JSON.parse(thisStage)
+           }
+       
+           loadPrevTurn(turnKey) {
+               const prevTurn = turnKey - 1;
+               const thisStage  = JSON.stringify(this.savedTurn[prevTurn])
+               this.stage = JSON.parse(thisStage)
+           }
+       
+           // 저장된 객체에 다음 턴 key 값이 없으면 false.
+           loadNextTurn(turnKey) {
+               const nextTurn = turnKey + 1;
+               if(!this.savedTurn[nextTurn]) return false;
+               const thisStage  = JSON.stringify(this.savedTurn[nextTurn])
+               this.stage = JSON.parse(thisStage)
+               return true;
+           }
+
+       ```
+       
+     - 고쳐야할 부분 : 되돌리기를 한 경우에만 되돌리기 취소가 적용되도록 예외 처리 필요, 현재는 되돌리고 다른 곳으로 이동하고 되돌리기 취소를 하면 엉뚱한 곳으로 이동한다. 저장된 다음값은 그대로이기 때문.
