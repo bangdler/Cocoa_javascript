@@ -111,6 +111,7 @@ class StageManager{
             5: '0',
             6: 'P'
         };
+        this.savedTurn = {};
     }
 
     getStages() {
@@ -280,24 +281,53 @@ class StageManager{
         this.stageNum += 1;
         this.stage = this.dataManager.stages[this.stageNum - 1]
         this.originalStage = this.dataManager.originalStages[this.stageNum - 1]
+        this.savedTurn = {};
         if(this.stageNum > this.dataManager.stages.length) return true;
         return false;
     }
 
+    // 현재 stages 배열 (save 를 하면서 뒤 스테이지를 깨고 이전으로 load 할 경우 대비), stage 정보, savedTurn 객체 저장
+    // this.stage 도 깊은 복사를 해주어야 save - u 되돌리기 수행 후 다시 save - load 했을 때 반영이 된다.
     saveThisSlot(Num) {
         const saveStages = JSON.stringify(this.dataManager.stages);
         const saveStage = JSON.stringify(this.stage);
         const saveStageNum = this.stageNum;
-        this.dataManager.saveSlot[Num] = [JSON.parse(saveStages), JSON.parse(saveStage), saveStageNum]
+        const saveSavedTurn = JSON.stringify(this.savedTurn)
+        this.dataManager.saveSlot[Num] = [JSON.parse(saveStages), JSON.parse(saveStage), saveStageNum, JSON.parse(saveSavedTurn)]
     }
 
     loadThisSlot(Num) {
+        if (!this.dataManager.saveSlot[Num]) return false;
         const loadStages = JSON.stringify(this.dataManager.saveSlot[Num][0]);
         const loadStage = JSON.stringify(this.dataManager.saveSlot[Num][1])
         const loadStageNum = this.dataManager.saveSlot[Num][2];
+        const loadSavedTurn = JSON.stringify(this.dataManager.saveSlot[Num][3]);
         this.dataManager.stages = JSON.parse(loadStages);
         this.stage = JSON.parse(loadStage);
         this.stageNum = loadStageNum;
+        this.savedTurn = JSON.parse(loadSavedTurn);
+        return true;
+    }
+
+    // 현재 turn 을 복사하여 savedTurn 객체에 저장한다. turnKey type은 number.
+    saveThisTurn() {
+        const turnKey = this.getStageTurnCount();
+        const thisStage = JSON.stringify(this.stage);
+        this.savedTurn[turnKey] = JSON.parse(thisStage)
+    }
+
+    loadPrevTurn(turnKey) {
+        const prevTurn = turnKey - 1;
+        const thisStage  = JSON.stringify(this.savedTurn[prevTurn])
+        this.stage = JSON.parse(thisStage)
+    }
+
+    loadNextTurn(turnKey) {
+        const nextTurn = turnKey + 1;
+        if(!this.savedTurn[nextTurn]) return false;
+        const thisStage  = JSON.stringify(this.savedTurn[nextTurn])
+        this.stage = JSON.parse(thisStage)
+        return true;
     }
 
 }
@@ -354,6 +384,12 @@ class PlayerManager {
             else if(directionCommand === 'r') {
                 this.resetStage();
             }
+            else if(directionCommand === 'u') {
+                this.printPrevTurn();
+            }
+            else if(directionCommand === 'c') {
+                this.printNextTurn();
+            }
             else if(this.saveLoadKeyword[directionCommand]) {
                 this.saveNloadStage(directionCommand);
             }
@@ -361,7 +397,7 @@ class PlayerManager {
                 this.movePlayer(directionCommand);
             }
             this.getInput(rl);
-        });
+         });
     }
 
     checkInput(commands) {
@@ -391,6 +427,7 @@ class PlayerManager {
             if(this.stageManager.modifyStageInfo(currentCoord, nextCoord, direction)) {
                 this.alertMessage(command, true);
                 this.stageManager.turnCountUp();
+                this.stageManager.saveThisTurn();
             }else{
                 this.alertMessage(command, false);
             }
@@ -421,6 +458,7 @@ class PlayerManager {
         else {
             console.log (`Stage : ${this.stageManager.stageNum}`)
             this.printThisMap();
+            this.stageManager.saveThisTurn()
         }
     }
 
@@ -439,8 +477,8 @@ class PlayerManager {
 
     // stages 배열의 각 stage 정보를 출력한다.
     printAllStages() {
-        const allStageInfo = this.stageManager.getStages();
-        allStageInfo.forEach(function (stage) {
+        const stagesInfo = this.stageManager.getStages();
+        stagesInfo.forEach(function (stage) {
             console.log("Stage ", stage.stageNum, '\n');
             console.log(this.stageManager.getSymbolMap(stage['currentMap']));
             console.log('\n가로크기: ', stage.x);
@@ -460,11 +498,41 @@ class PlayerManager {
             this.printThisMap();
        }
         else if(saveKey === 'load') {
-            this.stageManager.loadThisSlot(saveNum)
-            console.log(`${saveNum}번 슬로 ${saveKey} 합니다.`)
+            if(!this.stageManager.loadThisSlot(saveNum)){
+                console.log("저장된 내용이 없습니다.")
+            }
+            else {
+                console.log(`${saveNum}번 슬로 ${saveKey} 합니다.`)
+            }
             this.printThisMap();
         }
     }
+
+    printPrevTurn() {
+        const thisTurn = this.stageManager.getStageTurnCount();
+        if (thisTurn === 0) {
+            console.log("초기 화면입니다.")
+            return;
+        }
+        else {
+            console.log("이전 turn 으로 돌아갑니다.")
+            this.stageManager.loadPrevTurn(thisTurn);
+            this.printThisMap();
+        }
+    }
+
+    printNextTurn() {
+        const thisTurn = this.stageManager.getStageTurnCount();
+        if (!this.stageManager.loadNextTurn(thisTurn)) {
+            console.log("더이상 돌아갈 수 없습니다.")
+            return;
+        } else {
+            console.log("다음 turn 으로 다시 돌아갑니다.")
+            this.stageManager.loadNextTurn(thisTurn);
+            this.printThisMap();
+        }
+    }
+
 }
 
 let dataManager = new DataManager('map')
