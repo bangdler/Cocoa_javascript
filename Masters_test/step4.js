@@ -112,6 +112,7 @@ class StageManager{
             6: 'P'
         };
         this.savedTurn = {};
+        this.returnCount = 0;
     }
 
     getStages() {
@@ -310,21 +311,27 @@ class StageManager{
     }
 
     // 현재 turn 을 복사하여 savedTurn 객체에 저장한다. turnKey type은 number.
+    // 움직이는 경우 returnCount 를 초기화한다.
     saveThisTurn() {
         const turnKey = this.getStageTurnCount();
         const thisStage = JSON.stringify(this.stage);
         this.savedTurn[turnKey] = JSON.parse(thisStage)
+        this.returnCount = 0;
     }
 
+    // returnCount 로 되돌리기 한 횟수를 센다.
     loadPrevTurn(turnKey) {
         const prevTurn = turnKey - 1;
         const thisStage  = JSON.stringify(this.savedTurn[prevTurn])
         this.stage = JSON.parse(thisStage)
+        this.returnCount += 1;
     }
 
+    // 되돌리기한 횟수만큼 취소할 수 있다. returnCount 가 0이면 더이상 되돌릴 수 없다.
     loadNextTurn(turnKey) {
         const nextTurn = turnKey + 1;
-        if(!this.savedTurn[nextTurn]) return false;
+        if(this.returnCount === 0) return false;
+        this.returnCount -= 1;
         const thisStage  = JSON.stringify(this.savedTurn[nextTurn])
         this.stage = JSON.parse(thisStage)
         return true;
@@ -521,14 +528,14 @@ class PlayerManager {
         }
     }
 
+    // if 문에서 이미 loadNextTurn 이 실행되기 때문에 else 일 경우 한번더 실행할 필요가 없다.
     printNextTurn() {
         const thisTurn = this.stageManager.getStageTurnCount();
         if (!this.stageManager.loadNextTurn(thisTurn)) {
-            console.log("더이상 돌아갈 수 없습니다.")
+            console.log("더이상 취소할 수 없습니다.")
             return;
         } else {
-            console.log("다음 turn 으로 다시 돌아갑니다.")
-            this.stageManager.loadNextTurn(thisTurn);
+            console.log("되돌리기를 취소합니다.")
             this.printThisMap();
         }
     }

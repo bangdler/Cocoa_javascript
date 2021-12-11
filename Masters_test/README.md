@@ -887,3 +887,36 @@
        ```
        
      - 고쳐야할 부분 : 되돌리기를 한 경우에만 되돌리기 취소가 적용되도록 예외 처리 필요, 현재는 되돌리고 다른 곳으로 이동하고 되돌리기 취소를 하면 엉뚱한 곳으로 이동한다. 저장된 다음값은 그대로이기 때문.
+     - 되돌리기 취소 filtering
+        - 되돌리기 한 횟수만큼만 되돌리기 취소가 가능하도록 구현
+        - saveThisTurn 시 returnCount = 0 으로 맞춘 후, 되돌리기를 할 때마다 returnCount 를 +1 해준다.
+        - 이후 되돌리기 취소 시 -1 를 해주고, 0일 경우 false 를 return 해 취소가 불가능하다는 메세지를 보여준다.
+          ```javascript
+          // 되돌리기한 횟수만큼 취소할 수 있다. returnCount 가 0이면 더이상 되돌릴 수 없다.
+              loadNextTurn(turnKey) {
+                  const nextTurn = turnKey + 1;
+                  if(this.returnCount === 0) return false;
+                  this.returnCount -= 1;
+                  const thisStage  = JSON.stringify(this.savedTurn[nextTurn])
+                  this.stage = JSON.parse(thisStage)
+                  return true;
+              }       
+          ```
+        
+        - 오류 사항
+          ```javascript
+          // 초기 코드에서는 else 일 경우에도 loadNextTurn 을 실행하였는데 true 일 경우 이미 이전 if 문에서 실행되기 때문에 returnCount 가 -2 씩 감소하였다.  
+          printNextTurn() {
+                  const thisTurn = this.stageManager.getStageTurnCount();
+                  if (!this.stageManager.loadNextTurn(thisTurn)) {
+                      console.log("더이상 취소할 수 없습니다.")
+                      return;
+                  } else {
+                      // this.stageManager.loadNextTurn(thisTurn) 
+                      console.log("되돌리기를 취소합니다.")
+                      this.printThisMap();
+                  }
+              }
+
+          ```
+        
