@@ -1,106 +1,69 @@
-/**
- * Definition for singly-linked list.
- * function ListNode(val, next) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.next = (next===undefined ? null : next)
- * }
- */
-/**
- * @param {ListNode} list1
- * @param {ListNode} list2
- * @return {ListNode}
- */
 
-//첫번째 시도 : leet 사이트에서 concat 을 인식 못하는듯..
+
+// node 만드는 함수, 문제에서 제공
+function ListNode(val, next) {
+    this.val = (val===undefined ? 0 : val)
+    this.next = (next===undefined ? null : next)
+}
+
+// 입력값 예시를 만들기 위함. 배열을 받으면 연결된 노드 객체로 바꾼다.
+function makeLinkedList (array) {
+    let head = null;
+    // 배열 순회하면서 head node 를 만들고 신규 node 는 head 의 마지막 node 인 curr.next 에 위치시킨다.
+    for (let i = 0; i < array.length; i++) {
+        let node = new ListNode(array[i]);
+        if(head === null) {
+            head = node;
+        }
+        else {
+            let curr = head;
+            while(curr.next) {
+                curr = curr.next;
+            }
+            curr.next = node
+        }
+    }
+    return head;
+}
+
+let list1 = [1,3,4];
+let list2 = [1,2,4];
+let firstNode = new ListNode(null);
+let a = makeLinkedList(list1)
+let b = makeLinkedList(list2)
+console.log(firstNode)
+console.log(a)
+
+// 두개의 node 객체를 받아 순서대로 연결한다.
 function mergeTwoLists(list1, list2) {
-    let mergeList;
-    mergeList = list1.concat(list2);
-    mergeList.sort(function(a,b) {return a - b;})
-    return mergeList;
+    // 두 객체가 null 로 들어오는 input 은 없어서 삭제해도 무방.
+     if (list1 ===null && list2 === null) return null;
+     // head 생성
+     let head = new ListNode();
+     let curr = head;
+     // 두 node 모두 값이 있을 경우에 비교를 한다. 작은 값의 node를 모두 curr 에 연결시킨다. 각 List 는 연결 이후 값으로 update.
+     while (list1 && list2) {
+         if (list1.val <= list2.val) {
+             curr.next = list1;
+             list1 = list1.next;
+         }
+         else {
+             curr.next = list2;
+             list2 = list2.next;
+         }
+         // curr 을 변경해준다.
+         curr = curr.next
+     }
+     // 두 list 중 하나가 먼저 완료되는 경우 나머지 list 를 그대로 붙여준다.
+     if (list1 !== null){
+         curr.next = list1
+     }
+     else if(list2 !== null) {
+         curr.next = list2;
+     }
+     // Head node 의 첫번째는 항상 value 0 이므로 Next 부터 연결된 List 임.
+     return head.next;
 }
 
-let list1 = [1,2,4]
-let list2 = [1,3,4]
-//console.log(mergeTwoLists(list1,list2))
-
-// 두번째 시도
-// list 하나를 고정하고 값을 순회하면서 나머지 list 를 쪼개서 붙인다.
-// leetcode 에서 input 조건이 달라서 그런지 오답으로 나옴...
-function mergeTwoLists2(list1, list2) {
-    let ListObject = {};
-    let biggerList = [];
-    let anchorList = list1.map(element => element)
-    let j =0;
-    for(let i = 0; i < list1.length; i++) {
-        let smallerList = [];
-        for(; j < list2.length; j++) {
-            if(list2[j] <= list1[i]) {
-                smallerList.push(list2[j])
-            }
-            else if(list2[j] > list1[i]) {
-                if(i === list1.length) {
-                    biggerList = list2.slice(j)
-                    ListObject[list1.length] = biggerList
-                }
-                break;
-            }
-        }
-        ListObject[list1[i]] = smallerList;
-    }
-    //console.log(ListObject)
-    for(let key in ListObject) {
-        let anchorIndex = anchorList.indexOf(Number(key));
-        let appendArray = ListObject[key];
-        if (appendArray === []) continue;
-
-        //console.log(appendArray)
-        for(let i = 0; i < appendArray.length; i++) {
-            anchorList.splice(anchorIndex+i, 0, appendArray[i]);
-        }
-    }
-    //console.log(list1)
-    return anchorList;
-}
-
-//console.log(mergeTwoLists2(list1, list2))
-
-// 세번째 시도 : 배열을 순회하면서 각 값을 비교하여 작은값을 results 배열에 넣는다.
-// leet 에서 오답처리됨...
-function ListNode(list1, list2) {
-    let results = [];
-    if (list1[0] === undefined && list2[0] !== undefined) return list2
-    else if (list1[0] !== undefined && list2[0] === undefined) return list1
-    else if (list1[0] === undefined && list2[0] === undefined) return [];
-    else {
-        // 두 배열의 길이가 다르면 순회가 다 안되는 경우가 있어 밖에서 i, j 선언.
-        let i = 0;
-        let j = 0;
-        for (; i < list1.length;) {
-            if(j < list2.length) {
-                for (; j < list2.length;) {
-                    if (list1[i] > list2[j]) {
-                        results.push(list2[j]);
-                        j++;
-                    }
-                    else if (list1[i] <= list2[j]) {
-                        results.push(list1[i]);
-                        i++;
-                        break;  // i 넣는 순간 j 오름차순이므로 뒤는 볼 필요 없음.
-                    }
-                }
-            }
-            // list 2 가 먼저 push 되어 순회 종료되는 경우 i 남은 값들을 넣어준다.
-            else {
-                results.push(list1[i])
-                i++;
-                }
-            }
-        // list 1 이 먼저 push 되어 순회 종료되는 경우 j 남은 값들을 넣어준다.
-        for (; j <list2.length; j++) {
-            results.push(list2[j])
-        }
-    }
-    return results;
-}
-
-console.log(ListNode(list1,list2))
+let result = mergeTwoLists(a, b)
+console.log(result)
