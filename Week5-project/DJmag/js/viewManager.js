@@ -36,7 +36,7 @@ export class ViewManager {
         const config = {
             type: 'line',
             data: {
-                labels: yearList.reverse(),
+                labels: yearList,
                 datasets: [{
                     label: djName,
                     backgroundColor: 'rgb(255, 99, 132)',

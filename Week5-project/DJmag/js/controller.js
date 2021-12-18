@@ -39,7 +39,9 @@ export class Controller {
         // 이벤트 위임
         if (target.className !=='djSelect') return;
         const selectedKey = target.id;
-        const yearArray = this.data.yearList;
+        // 참조 문제로 년도가 계속 reverse 되어 복사를 통해 reverse 값 전달.
+        let yearArray = Object.assign([], this.data.yearList);
+        let yearArrayReverse = yearArray.reverse();
         const selectedRankArray = this.data.djRankData[selectedKey]
         const selectedImg = this.selectImageHandler(selectedKey)
         this.clickUrlListener(selectedKey);
@@ -47,7 +49,7 @@ export class Controller {
         // view에 만들어야할 함수.
         this.view.renderDjImg(selectedImg)
         this.view.renderDjName(selectedKey)
-        this.view.renderDjRankTrend(yearArray, selectedRankArray, selectedKey)
+        this.view.renderDjRankTrend(yearArrayReverse, selectedRankArray, selectedKey)
     }
 
     isEmpty(djName) {
