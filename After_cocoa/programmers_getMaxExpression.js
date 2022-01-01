@@ -26,10 +26,12 @@ function solution(expression) {
     let basicOperators = ['*', '+', '-'];
     let operatorsComb = combinationOperator(basicOperators)
     let results = [];
+    // 연산자 우선순위에 따른 조합을 하나씩 넣어 수식 결과값을 배열에 넣는다.
     operatorsComb.forEach(function(operators) {
-        console.log(operators)
-        results.push(calculator(expression, operators))
+        results.push(...calculator2(expression, operators))
+        //console.log(results)
     })
+    // 절대값으로 변환하여 최대값을 반환한다.
     let resultsNum = results.map((num) => (Math.abs(Number(num))))
     answer = Math.max(...resultsNum)
     return answer;
@@ -49,6 +51,7 @@ function combinationOperator(array) {
     return result;
 }
 
+// 틀린 방법.
 function calculator(expression, operators) {
     // operator 에 앞뒤에 해당하는 숫자까지 추출하여 계산한다.
     operators.forEach(function(operator) {
@@ -80,7 +83,6 @@ function calculator(expression, operators) {
                     result = -calculateExp[1] - calculateExp[2]
                 }
             }
-
             expression = expression.replace(reg, result)
             calculateReg = reg.exec(expression)
         }
@@ -89,8 +91,70 @@ function calculator(expression, operators) {
     return expression;
 }
 
-let expression = "100+200*300-500+20";
-//let operators = ['*', '+', '-'];
+// 연산자 순서에 따라 수식을 계산하여 결과값을 반환한다.
+function calculator2(expression, operators) {
+    // 수식을 숫자와 연산자로 나누어 배열로 바꾼다.
+    expression = expression.replace(/\+/g, ' + ');
+    expression = expression.replace(/\-/g, ' - ');
+    expression = expression.replace(/\*/g, ' * ');
+    let expressionArr = expression.split(' ')
+    let numExpArr = expressionArr.map(function(str) {
+        if(str === '+' || str === '*' || str === '-') {
+            return str;
+        }
+        else {
+            return Number(str);
+        }
+    })
+    //console.log(numExpArr)
+    // 배열에서 stack 을 활용하여 해당 연산자일 경우 계산하고, 아닐 경우에 stack 에 넣어 수식 배열을 업데이트한다.
+    let array = numExpArr;
+    let result;
+    operators.forEach(function(operator) {
+        // on 으로 계산 필요 여부를 구분한다. stack 에 결과를 하나씩 넣어 연산 이후의 수식으로 업데이트한다.
+        let on = 0;
+        let stack = [];
+        //console.log(array)
+        array.forEach(function(data) {
+            if(typeof data === "number" && on === 0) {
+                stack.push(data)
+            }
+            else if(typeof data === "number" && on === 1) {
+                if(operator === '+') {
+                    let calNum = stack.pop() + data;
+                    stack.push(calNum);
+                    on = 0;
+                }
+                else if(operator === '*') {
+                    let calNum = stack.pop() * data;
+                    stack.push(calNum);
+                    on = 0;
+                }
+                else if(operator === '-') {
+                    let calNum = stack.pop() - data;
+                    stack.push(calNum);
+                    on = 0;
+                }
+            }
+            else if(typeof data === "string" && data !== operator) {
+                stack.push(data)
+            }
+            else if(typeof data === "string" && data === operator) {
+                on = 1;
+            }
+        })
+        array = stack;
+    })
+    result = array;
+    return result;
+}
+
+
+let expression = "50*6-3*2";
+let operators = ['*', '+', '-'];
 //console.log(combinationOperator(operators))
 //console.log(calculator(expression, operators))
+//console.log(solution(expression))
+
+//calculator2(expression, operators)
 console.log(solution(expression))
